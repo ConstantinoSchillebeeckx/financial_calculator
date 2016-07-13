@@ -28,7 +28,28 @@ function init(div) {
       .append("form")
         .attr("class","form-inline")
         .attr("onsubmit","return false") // don't submit form
-      
+
+    form.append("div")
+        .attr("class","form-group")
+      .append("input")
+        .attr("type","text")
+        .attr("class","form-control")
+        .attr("id","currentAge")
+        .attr("placeholder","Current age") // TODO should have spacing between button and input
+        .attr("required",'')
+        .attr("size",13)
+
+    form.append("div")
+        .attr("class","form-group")
+      .append("input")
+        .attr("type","text")
+        .attr("class","form-control")
+        .attr("id","retirementAge")
+        .attr("placeholder","Retirement age") // TODO should have spacing between button and input
+        .attr("required",'')
+        .attr("size",13)
+        
+
     form.append("div")
         .attr("class","form-group")
       .append("input")
