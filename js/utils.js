@@ -16,7 +16,7 @@ function addPortfolio(name) {
             .style("margin-top","20px");
 
 
-       collapse.append("div")
+       var bar = collapse.append("div")
             .attr("class","panel-heading")
             .style("overflow","auto")
             .attr("role","tab")
@@ -30,6 +30,15 @@ function addPortfolio(name) {
             .attr("aria-expanded","true")
             .attr("aria-controls","collapseGUI")
             .html("<i class='fa fa-chevron-down'></i> " + name)
+         .append("a")
+            .attr("href","#")
+            .attr("onclick","removePortfolio(this); return false; ")
+            .attr('class', 'pull-right muted')
+            .style('padding','1px 7px')
+            .append('i')
+            .attr('class','fa fa-close')
+            .attr('title','Save image')
+
 
         var gui = collapse.append("div")
             .attr("id","collapseGUI")
@@ -48,15 +57,23 @@ function addPortfolio(name) {
         var tmp = col1.append("div")
             .attr("class","btn-toolbar")
 
-        tmp.append("button")
-            .attr("class","btn btn-info")
-            .attr("id","rectangular")
-            .attr("title","Generate a rectangular layout")
-            .attr("onclick","updateTree({'treeType':this.id})")
-            .html('<i class="fa fa-square-o fa-lg" aria-hidden="true"></i>')
     }
 
 }
+
+
+/* Remove portfolio collape div
+
+Parameters:
+===========
+- a : this of the a href that was clicked
+
+*/
+function removePortfolio(a) {
+    $(a).parentsUntil('.col-sm-12').remove();
+}
+
+
 
 
 // Given an integer, will return it

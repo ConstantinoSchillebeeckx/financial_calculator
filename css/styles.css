@@ -11,3 +11,8 @@ body {
 .arc path {
   stroke: #fff;
 }
+
+.muted {
+    text-decoration: none;
+    color: gray;
+}

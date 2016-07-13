@@ -9,6 +9,7 @@
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
         <link href="https://cdn.rawgit.com/MasterMaps/d3-slider/master/d3.slider.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="css/styles.css" />
 
         <!-- JS -->
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
