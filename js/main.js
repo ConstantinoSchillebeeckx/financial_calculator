@@ -103,8 +103,8 @@ function init(div) {
 
 }
 
-//var test = new Portfolio(name, new Profile(), defaultRateOfReturn, defaultFee, defaultStartingValue, defaultContributions, defaultContribFreqPerYear, defaultCompoundFreqPerYear, defaultFeeFreqPerYear);
+var test = new Portfolio(name, new Profile(), defaultRateOfReturn, defaultFee, defaultStartingValue, defaultContributions, defaultContribFreqPerYear, defaultCompoundFreqPerYear, defaultFeeFreqPerYear);
 
-//stackedBar(test.dat, 'body')
+stackedBar(test.dat, 'body')
 //plotPie(test.totals, 'body')
 

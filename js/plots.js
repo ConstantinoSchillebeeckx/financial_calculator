@@ -59,11 +59,17 @@ function plotPie(data, div) {
 
 function stackedBar(data, div) {
 
+    // categories to show on the plot
+    var plotCols = ["contributions", "fee", "inflation", "interest"];
+
     // subsample to every year
     var dat = data.filter(function(value, index, Arr) {
         return index % 12 == 0;
     });
     dat['columns'] = data.columns;
+
+
+
 
     var margin = {top: 30, right: 90, bottom: 50, left: 20},
         width = 960 - margin.left - margin.right,
@@ -89,12 +95,19 @@ function stackedBar(data, div) {
     var z = d3.scale.category10();
 
     //var stack = d3.stack();
-    var layers = d3.layout.stack()(dat.columns.map(function(c) {
-        return dat.map(function(d) {
-            return {x: d.year, y: d[c]};
-        });
-    }))
-    console.log(dat)
+    console.log(dat.columns);
+    var layers = d3.layout.stack()(dat.columns.filter(function(l) {
+            if (plotCols.indexOf(l) > -1) {
+                return true;
+            }
+            return false;
+        }).map(function(c) {
+            return dat.map(function(d) {
+                return {x: d.year, y: d[c]};
+            });
+        })
+    )
+
 
     x.domain(layers[0].map(function(d) { return d.x; }));
     y.domain([0, d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
@@ -139,7 +152,7 @@ function stackedBar(data, div) {
       .call(yAxis);
 
     var legend = svg.selectAll(".legend")
-      .data(dat.columns.slice(1).reverse())
+      .data(dat.columns.slice(1))
       .enter().append("g")
         .attr("class", "legend")
         .attr("transform", function(d, i) { return "translate(20," + i * 20 + ")"; })

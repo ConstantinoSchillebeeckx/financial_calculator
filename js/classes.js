@@ -46,7 +46,6 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
         }
         dat[i].capital = capitalSum;
 
-
         // fees
         if (i % (12 / feeFreqPerYear) == 0) {
             dat[i].fee = capitalSum * this.fee / (feeFreqPerYear * 100.0);
@@ -67,8 +66,6 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
         } else {
             dat[i].inflation = 0;
         }
-
-        dat[i].total = dat[i].contributions + dat[i].fee + dat[i].interest + dat[i].inflation;
     }
     dat['columns'] = ['capital','contributions','fee','inflation','interest'];
     this.dat = dat;
