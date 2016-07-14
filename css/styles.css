@@ -1,6 +1,5 @@
 body {
-    font-family: "Open Sans", Helvetica, sans-serif; 
-    font-size: 11px;
+    font-family: "Montserrat", Helvetica, sans-serif; 
 }
 
 .arc text {
@@ -12,7 +11,47 @@ body {
   stroke: #fff;
 }
 
+.axis text {
+  font-size: 10px;
+}
+
+.axis line,
+.axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis--x path {
+  display: none;
+}
+
 .muted {
     text-decoration: none;
     color: gray;
+}
+
+div.form-group, form button {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.slider {
+    margin-bottom: 20px;
+}
+
+form {
+    margin-top: 20px;
+}
+
+label {
+    font-weight: 800;
+}
+
+input {
+    font-weight: 300;
+}
+
+select {
+    margin-left: 5px;
 }

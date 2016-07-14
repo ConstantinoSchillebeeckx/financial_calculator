@@ -15,17 +15,21 @@ function plotPie(data, div) {
         height = 500,
         radius = Math.min(width, height) / 2;
 
-    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    //var color = d3.scaleOrdinal(d3.schemeCategory10);
+    var color = d3.scale.category10();
 
-    var arc = d3.arc()
+    //var arc = d3.arc()
+    var arc = d3.svg.arc()
         .outerRadius(radius - 10)
         .innerRadius(0);
 
-    var labelArc = d3.arc()
+    //var labelArc = d3.arc()
+    var labelArc = d3.svg.arc()
         .outerRadius(radius - 40)
         .innerRadius(radius - 40);
 
-    var pie = d3.pie()
+    //var pie = d3.pie()
+    var pie = d3.layout.pie()
         .sort(null)
         .value(function(d) { return Math.abs(d.val); });
 
@@ -61,62 +65,80 @@ function stackedBar(data, div) {
     });
     dat['columns'] = data.columns;
 
+    var margin = {top: 30, right: 90, bottom: 50, left: 20},
+        width = 960 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom
+
     var svg = d3.select(div)
         .append('svg')
           .attr("width",960)
-          .attr("height",600);
-    var margin = {top: 20, right: 20, bottom: 30, left: 40},
-        width = 960 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom,
-        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+          .attr("height",600)
+        .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var x = d3.scaleBand()
-        .rangeRound([0, width])
-        .padding(0.1)
-        .align(0.1);
+    //var x = d3.scaleBand()
+    var x = d3.scale.ordinal()
+        .rangeRoundBands([0, width])
+        //.padding(0.1)
+        //.align(0.1);
 
-    var y = d3.scaleLinear()
+    //var y = d3.scaleLinear()
+    var y = d3.scale.linear()
         .rangeRound([height, 0]);
 
-    var z = d3.scaleOrdinal(d3.schemeCategory10);
+    //var z = d3.scaleOrdinal(d3.schemeCategory10);
+    var z = d3.scale.category10();
 
+    //var stack = d3.stack();
+    var layers = d3.layout.stack()(dat.columns.map(function(c) {
+        return dat.map(function(d) {
+            return {x: d.year, y: d[c]};
+        });
+    }))
+    console.log(dat)
 
-    var stack = d3.stack();
+    x.domain(layers[0].map(function(d) { return d.x; }));
+    y.domain([0, d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
 
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom")
 
-    x.domain(dat.map(function(d) { return d.year; }));
-    y.domain([0, d3.max(data, function(d) { return d.total; })]).nice();
-    z.domain(dat.columns.slice(1));
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("right")
+        .tickFormat(function(d) { return formatCurrency(d); });
 
-    g.selectAll(".series")
-      .data(stack.keys(dat.columns.slice(1))(dat))
-      .enter().append("g")
-        .attr("class", "series")
-        .attr("fill", function(d) { return z(d.key); })
-      .selectAll("rect")
+    var layer = svg.selectAll(".layer")
+      .data(layers)
+    .enter().append("g")
+      .attr("class", "layer")
+      .style("fill", function(d, i) { return z(i); });
+
+    layer.selectAll("rect")
       .data(function(d) { return d; })
-      .enter().append("rect")
-        .attr("x", function(d) { return x(d.data.year); })
-        .attr("y", function(d) { return y(d[1]); })
-        .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-        .attr("width", x.bandwidth());
+    .enter().append("rect")
+      .attr("x", function(d) { return x(d.x); })
+      .attr("y", function(d) { return y(d.y + d.y0); })
+      .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+      .attr("width", x.rangeBand() - 1);
 
-    g.append("g")
-        .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+    svg.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .selectAll("text")
+    .attr("y", 0)
+    .attr("x", 9)
+    .attr("dy", ".35em")
+    .attr("transform", "rotate(90)")
+    .style("text-anchor", "start");
 
-    g.append("g")
-        .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y).ticks(10, "s"))
-      .append("text")
-        .attr("x", 2)
-        .attr("y", y(y.ticks(10).pop()))
-        .attr("dy", "0.35em")
-        .attr("text-anchor", "start")
-        .attr("fill", "#000")
+    svg.append("g")
+      .attr("class", "axis axis--y")
+      .attr("transform", "translate(" + width + ",0)")
+      .call(yAxis);
 
-    var legend = g.selectAll(".legend")
+    var legend = svg.selectAll(".legend")
       .data(dat.columns.slice(1).reverse())
       .enter().append("g")
         .attr("class", "legend")
@@ -127,7 +149,7 @@ function stackedBar(data, div) {
         .attr("x", 18)
         .attr("width", 18)
         .attr("height", 18)
-        .attr("fill", z);
+        .attr("fill", function(d,i) { return z(i); });
 
     legend.append("text")
         .attr("x", 40)
