@@ -26,11 +26,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
 
-    <body onload="init('body')">
+    <body onload="init('body')"> </body>
 
     <script src="js/main.js"></script>
-
-    </body>
 </html>
 
 

@@ -4,15 +4,18 @@ TODO
 
 Parameters:
 ===========
-- data : d3.csv parse style data
+- dat : d3.csv parse style data
          expects this to be an array of obj
          with keys 'val' and 'name'
 
 */
-function plotPie(data, div) {
+function plotPie(portfolio, div) {
 
-    var width = 960,
-        height = 500,
+    var data = portfolio.totals;
+
+    var margin = {top: 10, right: 10, bottom: 10, left: 10};
+    var width = d3.select(div).node().clientWidth - margin.left - margin.right;
+        height = width * 0.8 - margin.top - margin.bottom,
         radius = Math.min(width, height) / 2;
 
     //var color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -34,8 +37,8 @@ function plotPie(data, div) {
         .value(function(d) { return Math.abs(d.val); });
 
     var svg = d3.select(div).append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
@@ -57,7 +60,9 @@ function plotPie(data, div) {
 
 
 
-function stackedBar(data, div) {
+function stackedBar(portfolio, div) {
+
+    var data = portfolio.dat;
 
     // categories to show on the plot
     var plotCols = ["contributions", "fee", "inflation", "interest"];
@@ -69,16 +74,14 @@ function stackedBar(data, div) {
     dat['columns'] = data.columns;
 
 
-
-
     var margin = {top: 30, right: 90, bottom: 50, left: 20},
-        width = 960 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom
+        width = d3.select(div).node().clientWidth - margin.left - margin.right,
+        height = width * 0.5 - margin.top - margin.bottom
 
     var svg = d3.select(div)
         .append('svg')
-          .attr("width",960)
-          .attr("height",600)
+          .attr("width",width + margin.left + margin.right)
+          .attr("height",height + margin.top + margin.bottom)
         .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //var x = d3.scaleBand()
@@ -95,7 +98,6 @@ function stackedBar(data, div) {
     var z = d3.scale.category10();
 
     //var stack = d3.stack();
-    console.log(dat.columns);
     var layers = d3.layout.stack()(dat.columns.filter(function(l) {
             if (plotCols.indexOf(l) > -1) {
                 return true;

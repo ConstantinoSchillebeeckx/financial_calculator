@@ -12,7 +12,8 @@ function addPortfolio() {
         var profile = new Profile(name, currentAge, retirementAge, defaultInflation);
         var portfolio = new Portfolio(name, profile, defaultRateOfReturn, defaultFee, defaultStartingValue, defaultContributions, defaultContribFreqPerYear, defaultCompoundFreqPerYear, defaultFeeFreqPerYear);
         portfolios.set(name, portfolio);
-        console.log(portfolio);
+
+        var id = portfolio.id;
 
         var container = d3.select("#container")
 
@@ -24,7 +25,7 @@ function addPortfolio() {
         // accordion ----------------------------------
         var collapse = portfolioRow.append('div')
             .attr("class","panel panel-default")
-            .attr("id", name)
+            .attr("id", "portfolio-" + id)
             .style("margin-top","20px");
 
        var bar = collapse.append("div")
@@ -61,7 +62,7 @@ function addPortfolio() {
             .attr("class","panel-body")
 
         var guiRow1 = gui.append("div")
-            .attr("class","row")
+            .attr("class","row portfolioGUI")
 
 
         var col0 = guiRow1.append("div")
@@ -74,15 +75,15 @@ function addPortfolio() {
             .html("Starting capital <span class='muted'>[" + formatCurrency(defaultStartingValue) + "]</span>")
 
         slider0.append("div")
-            .attr("id","startingValueSlider")
+            .attr("id","startingValueSlider-" + id)
             .attr("class","slider")
 
         var startingValueSlider = d3.slider().min(0).max(50000).step(1000).axis(true).value(defaultStartingValue)
                             .on("slide", function(evt, value) { 
-                                d3.select("#startingValue label").html("Starting capital <span class='muted'>[" + formatCurrency(value) + "]</span>");
-                                updatePlots(); 
+                                $("#startingValueSlider-" + id).parent().find("label").html("Starting capital <span class='muted'>[" + formatCurrency(value) + "]</span>");
+                                updatePlots(id); 
                             });
-        d3.select('#startingValueSlider').call(startingValueSlider);
+        d3.select('#startingValueSlider-' + id).call(startingValueSlider);
 
 
         var col1 = guiRow1.append("div")
@@ -95,15 +96,15 @@ function addPortfolio() {
             .html("Rate of return <span class='muted'>[" + defaultRateOfReturn.toFixed(1) + "%]</span>")
 
         slider1.append("div")
-            .attr("id","rateOfReturnSlider")
+            .attr("id","rateOfReturnSlider-" + id)
             .attr("class","slider")
 
         var rateOfReturnSlider = d3.slider().min(0).max(15).step(0.1).axis(true).value(defaultRateOfReturn)
                             .on("slide", function(evt, value) { 
-                                d3.select("#rateOfReturn label").html("Rate of return <span class='muted'>[" + value.toFixed(1) + "%]</span>");
-                                updatePlots(); 
+                                $("#rateOfReturnSlider-" + id).parent().find("label").html("Rate of return <span class='muted'>[" + value.toFixed(1) + "%]</span>");
+                                updatePlots(id); 
                             });
-        d3.select('#rateOfReturnSlider').call(rateOfReturnSlider);
+        d3.select('#rateOfReturnSlider-' + id).call(rateOfReturnSlider);
 
         col1.append("label")
             .text("Compound frequency")
@@ -133,15 +134,15 @@ function addPortfolio() {
             .html("Total fee <span class='muted'>[" + defaultFee.toFixed(1) + "%]</span>")
 
         slider1.append("div")
-            .attr("id","feeSlider")
+            .attr("id","feeSlider-" + id)
             .attr("class","slider")
 
         var feeSlider = d3.slider().min(0).max(15).step(0.1).axis(true).value(defaultFee)
                             .on("slide", function(evt, value) { 
-                                d3.select("#fee label").html("Total fee <span class='muted'>[" + value.toFixed(1) + "%]</span>");
-                                updatePlots(); 
+                                $("#feeSlider-" + id).parent().find("label").html("Total fee <span class='muted'>[" + value.toFixed(1) + "%]</span>");
+                                updatePlots(id); 
                             });
-        d3.select('#feeSlider').call(feeSlider);
+        d3.select('#feeSlider-' + id).call(feeSlider);
 
         col2.append("label")
             .text("Fee compound frequency")
@@ -171,15 +172,16 @@ function addPortfolio() {
             .html("Contributions <span class='muted'>[" + formatCurrency(defaultContributions) + "]</span>")
 
         slider1.append("div")
-            .attr("id","contributionSlider")
+            .attr("id","contributionSlider-" + id)
             .attr("class","slider")
 
         var contributionSlider = d3.slider().min(0).max(5000).step(100).axis(true).value(defaultContributions)
                             .on("slide", function(evt, value) { 
-                                d3.select("#contributions label").html("Contributions <span class='muted'>[" + formatCurrency(value) + "]</span>");
-                                updatePlots(); 
+                                $("#contributionSlider-" + id).parent().find("label").html("Contributions <span class='muted'>[" + formatCurrency(value) + "]</span>");
+                                updatePlots(id); 
                             });
-        d3.select('#contributionSlider').call(contributionSlider);
+
+        d3.select('#contributionSlider-' + id).call(contributionSlider);
 
         col2.append("label")
             .text("Contribution frequency")
@@ -198,17 +200,29 @@ function addPortfolio() {
             .attr("value","12")
             .text("Monthly")
 
-/*
-- rate of return
-- compound freq
-- fee
-- fee freq
-- start value
-- contrib
-- contrib freq
-*/
 
         // accordion gui ----------------------------------
+
+
+        var guiRow2 = gui.append("div")
+            .attr("class","row portfolioPlots")
+
+        var col1 = guiRow2.append("div")
+            .attr("class","col-sm-7")
+            .attr("id","barPlot" + portfolio.id)
+
+        var col2 = guiRow2.append("div")
+            .attr("class","col-sm-4")
+            .attr("id","piePlot" + portfolio.id)
+
+        stackedBar(portfolio, '#barPlot' + portfolio.id)
+        plotPie(portfolio, '#piePlot' + portfolio.id)
+
+//var test = new Portfolio(name, new Profile(), defaultRateOfReturn, defaultFee, defaultStartingValue, defaultContributions, defaultContribFreqPerYear, defaultCompoundFreqPerYear, defaultFeeFreqPerYear);
+
+//stackedBar(test.dat, 'body')
+//plotPie(test.totals, 'body')
+
     }
 
 }
@@ -226,8 +240,8 @@ function removePortfolio(a) {
 }
 
 
-function updatePlots(moo) {
-
+function updatePlots(id) {
+    console.log(id);
 }
 
 // Given an integer, will return it

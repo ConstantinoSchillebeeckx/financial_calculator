@@ -93,6 +93,7 @@ function init(div) {
         .attr("class","form-control")
         .attr("id","portfolioName")
         .attr("placeholder","401(k)") 
+        .attr("value","401(k)")
         .attr("required",'')
         .attr("size",15)
 
@@ -101,10 +102,7 @@ function init(div) {
         .attr("class","btn btn-info")
         .text("Add new portfolio")
 
+    addPortfolio();
 }
 
-//var test = new Portfolio(name, new Profile(), defaultRateOfReturn, defaultFee, defaultStartingValue, defaultContributions, defaultContribFreqPerYear, defaultCompoundFreqPerYear, defaultFeeFreqPerYear);
-
-//stackedBar(test.dat, 'body')
-//plotPie(test.totals, 'body')
 
