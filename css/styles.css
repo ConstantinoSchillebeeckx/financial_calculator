@@ -31,6 +31,10 @@ body {
     color: gray;
 }
 
+span.muted {
+    font-weight: 300;
+}
+
 div.form-group, form button {
     margin-left: 2px;
     margin-right: 2px;
@@ -55,3 +59,4 @@ input {
 select {
     margin-left: 5px;
 }
+

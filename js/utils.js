@@ -130,7 +130,7 @@ function addPortfolio() {
             .attr("id","fee")
         
         slider1.append("label")
-            .html("Fee <span class='muted'>[" + defaultFee.toFixed(1) + "%]</span>")
+            .html("Total fee <span class='muted'>[" + defaultFee.toFixed(1) + "%]</span>")
 
         slider1.append("div")
             .attr("id","feeSlider")
@@ -138,7 +138,7 @@ function addPortfolio() {
 
         var feeSlider = d3.slider().min(0).max(15).step(0.1).axis(true).value(defaultFee)
                             .on("slide", function(evt, value) { 
-                                d3.select("#fee label").html("Fee <span class='muted'>[" + value.toFixed(1) + "%]</span>");
+                                d3.select("#fee label").html("Total fee <span class='muted'>[" + value.toFixed(1) + "%]</span>");
                                 updatePlots(); 
                             });
         d3.select('#feeSlider').call(feeSlider);
@@ -174,9 +174,9 @@ function addPortfolio() {
             .attr("id","contributionSlider")
             .attr("class","slider")
 
-        var contributionSlider = d3.slider().min(0).max(15).step(0.1).axis(true).value(defaultRateOfReturn)
+        var contributionSlider = d3.slider().min(0).max(5000).step(100).axis(true).value(defaultContributions)
                             .on("slide", function(evt, value) { 
-                                d3.select("#contributions label").html("Contributions <span class='muted'>[" + formatCurrency(value) + "%]</span>");
+                                d3.select("#contributions label").html("Contributions <span class='muted'>[" + formatCurrency(value) + "]</span>");
                                 updatePlots(); 
                             });
         d3.select('#contributionSlider').call(contributionSlider);
