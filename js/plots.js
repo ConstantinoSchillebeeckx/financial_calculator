@@ -18,25 +18,22 @@ function plotPie(portfolio, div) {
         height = width * 0.8 - margin.top - margin.bottom,
         radius = Math.min(width, height) / 2;
 
-    //var color = d3.scaleOrdinal(d3.schemeCategory10);
     var color = d3.scale.category10();
 
-    //var arc = d3.arc()
     var arc = d3.svg.arc()
         .outerRadius(radius - 10)
         .innerRadius(0);
 
-    //var labelArc = d3.arc()
     var labelArc = d3.svg.arc()
         .outerRadius(radius - 40)
         .innerRadius(radius - 40);
 
-    //var pie = d3.pie()
     var pie = d3.layout.pie()
         .sort(null)
         .value(function(d) { return Math.abs(d.val); });
 
     var svg = d3.select(div).append("svg")
+        .attr("id","pieSVG")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -80,24 +77,19 @@ function stackedBar(portfolio, div) {
 
     var svg = d3.select(div)
         .append('svg')
+          .attr("id","barSVG")
           .attr("width",width + margin.left + margin.right)
           .attr("height",height + margin.top + margin.bottom)
         .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    //var x = d3.scaleBand()
     var x = d3.scale.ordinal()
         .rangeRoundBands([0, width])
-        //.padding(0.1)
-        //.align(0.1);
 
-    //var y = d3.scaleLinear()
     var y = d3.scale.linear()
         .rangeRound([height, 0]);
 
-    //var z = d3.scaleOrdinal(d3.schemeCategory10);
     var z = d3.scale.category10();
 
-    //var stack = d3.stack();
     var layers = d3.layout.stack()(dat.columns.filter(function(l) {
             if (plotCols.indexOf(l) > -1) {
                 return true;
