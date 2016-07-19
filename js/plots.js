@@ -20,15 +20,15 @@ function plotPie(portfolio, div) {
 
     var color = d3.scale.category10();
 
-    var arc = d3.svg.arc()
+    arc = d3.svg.arc()
         .outerRadius(radius - 10)
         .innerRadius(0);
 
-    var labelArc = d3.svg.arc()
+    labelArc = d3.svg.arc()
         .outerRadius(radius - 40)
         .innerRadius(radius - 40);
 
-    var pie = d3.layout.pie()
+    pie = d3.layout.pie()
         .sort(null)
         .value(function(d) { return Math.abs(d.val); });
 
@@ -39,19 +39,27 @@ function plotPie(portfolio, div) {
       .append("g")
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-    var g = svg.selectAll(".arc")
+    var pieDat = svg.selectAll("path")
         .data(pie(data))
-      .enter().append("g")
-        .attr("class", "arc");
+      .enter().append("path")
 
-    g.append("path")
-        .attr("d", arc)
-        .style("fill", function(d) { return color(d.data.name); });
+    pieDat.style("fill", function(d) { return color(d.data.name); })
+        .attr("d",arc)
+        .each(function(d) { this._current = d; }); // store the initial angles
 
-    g.append("text")
-        .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+    var pieLabels = svg.selectAll("text")
+        .data(pie(data))
+      .enter().append("text")
+
+    pieLabels.attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
         .attr("dy", ".35em")
+        .attr("class","arc")
         .text(function(d) { return d.data.name + " (" + formatCurrency(d.data.val) + ")"; });
+
+    portfolio.pieDat = pieDat;
+    portfolio.pieLabels = pieLabels;
+
+    return portfolio;
 }
 
 
@@ -164,5 +172,7 @@ function stackedBar(portfolio, div) {
         .attr("dy", ".35em")
         .attr("text-anchor", "start")
         .text(function(d) { return d; });
+
+    return portfolio;
 
 }

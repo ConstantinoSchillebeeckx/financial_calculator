@@ -2,7 +2,7 @@ body {
     font-family: "Montserrat", Helvetica, sans-serif; 
 }
 
-.arc text {
+text.arc {
   font: 10px sans-serif;
   text-anchor: middle;
 }

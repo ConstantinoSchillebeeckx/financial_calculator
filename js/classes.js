@@ -21,6 +21,7 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
     this.feeFreqPerYear; // how often fee is charged (12: monthly, 1: yearly)
     this.startYear = new Date().getFullYear();
     this.startMonth = new Date().getMonth();
+    this.gui = {}; // will be filled with sliders associated with portfolio
 
 
     // calculate portfolio change over time
