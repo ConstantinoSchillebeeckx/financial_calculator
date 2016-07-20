@@ -2,7 +2,7 @@
 
 var num_portfolio = 0;
 
-function Portfolio (name="default", profile = new Profile("default"), rateOfReturn=6, fee=0.75, startingvalue=42000, contributions=500, contributionFreqPerYear=12, compoundFreqPerYear=1, feeFreqPerYear=1) {
+function Portfolio (name="default", profile = new Profile("default"), rateOfReturn=6, fee=0.75, startingValue=42000, contributions=500, contributionFreqPerYear=12, compoundFreqPerYear=1, feeFreqPerYear=1) {
 
     num_portfolio += 1;
 
@@ -14,7 +14,7 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
     this.rateOfReturn = rateOfReturn;
     this.fee = fee
 
-    this.startingvalue = startingvalue; // starting fund value
+    this.startingValue = startingValue; // starting fund value
     this.contributions = contributions; // contribution value
     this.contributionFreqPerYear = contributionFreqPerYear; // how often money is contributed to account (12: monthly, 1: yearly)
     this.compoundFreqPerYear = compoundFreqPerYear; // how often compounding occurs (12: monthly, 1: yearly)
@@ -27,7 +27,7 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
     // calculate portfolio change over time
     // assumes compounded on current month and then every freq period there after
     var yearSum = this.startYear;
-    var capitalSum = this.startingvalue;
+    var capitalSum = this.startingValue;
     var dat = [];
     for (var i = 0; i < this.profile.monthsToInvest; i ++) {
 
@@ -78,6 +78,11 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
     totals.push({'name':'inflation','val': d3.sum(dat, function(d) { return d.inflation; })});
     totals.push({'name':'interest','val': d3.sum(dat, function(d) { return d.interest; })});
     this.totals = totals;
+}
+
+// return net value of portfolio
+Portfolio.prototype.netValue = function() {
+    return this.startingValue + this.totals[3].val;
 }
 
 

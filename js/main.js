@@ -1,12 +1,12 @@
 // MAIN
 
-
+var color = d3.scale.category10();
 var defaultCurrentAge = 25;
-var defaultRetirementAge = 62;
-var defaultInflation = 2.0; // (%)
-var defaultRateOfReturn = 6.0; // (%)
-var defaultFee = 1.2; // (%)
-var defaultStartingValue = 10000; // ($)
+var defaultRetirementAge = 65;
+var defaultInflation = 2.0; // (%) 
+var defaultRateOfReturn = 4.0; // (%)
+var defaultFee = 1.2; // (%) 
+var defaultStartingValue = 20000; // ($)
 var defaultContributions = 500; // frequence set by var contributionFreqPerYear
 var defaultContribFreqPerYear = 12; // 12 -> monthly, 1 -> yearly, 3 -> quarterly
 var defaultCompoundFreqPerYear = 1; // 12 -> monthly, 1 -> yearly, 3 -> quarterly

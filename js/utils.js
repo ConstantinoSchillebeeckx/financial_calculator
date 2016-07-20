@@ -11,7 +11,6 @@ function addPortfolio() {
 
         var profile = new Profile(name, currentAge, retirementAge, defaultInflation);
         var portfolio = new Portfolio(name, profile, defaultRateOfReturn, defaultFee, defaultStartingValue, defaultContributions, defaultContribFreqPerYear, defaultCompoundFreqPerYear, defaultFeeFreqPerYear);
-
         var id = portfolio.id;
 
         var container = d3.select("#container")
@@ -220,8 +219,15 @@ function addPortfolio() {
             .attr("class","col-sm-4")
             .attr("id","piePlot" + portfolio.id)
 
+        // receive updated portfolio info for use in updating plots
         portfolio = stackedBar(portfolio, '#barPlot' + portfolio.id)
         portfolio = plotPie(portfolio, '#piePlot' + portfolio.id)
+
+        var net = formatCurrency(portfolio.netValue());
+        gui.append("p")
+            .attr("class","lead")
+            .html("Total portfolio value after " + portfolio.profile.yearsToInvest + " years is <mark><span id='netVal'>" + net + "</span></mark>");
+
 
         portfolios.set(id, portfolio);
     }
@@ -243,17 +249,6 @@ function removePortfolio(a) {
 
 // called everytime the GUI changes
 function updatePlots(id) {
-    updatePortfolio(id);
-}
-
-// Given an integer, will return it
-// formatted as USD ($xx,xxx.xx)
-function formatCurrency(d) {
-    return '$' + Math.abs(d).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-}
-
-
-function updatePortfolio(id) {
 
     var port = portfolios.get(id);
     var portDom = jQuery("#portfolio-"+id);
@@ -271,27 +266,53 @@ function updatePortfolio(id) {
                                    contribFreq, compoundFreq, feeFreq
                                   )
 
+    jQuery("#netVal").html(formatCurrency(portUpdate.netValue()));
+
     // carry-over old portfolio attributes
     portUpdate.id = port.id;
     portUpdate.gui = port.gui;
     portUpdate.pieDat = port.pieDat;
     portUpdate.pieLabels = port.pieLabels;
 
+    // update portfolio with new numbers
     portfolios.set(id, portUpdate);
+
+    // transition bar chart
+/*
+    var x = port.barX;
+    var y = port.barY;
+    var layers = calcBar(portUpdate.dat);
+    x.domain(layers[0].map(function(d) { return d.x; }));
+    y.domain([0, d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
+
+    port.barDat.data(layers)
+        .selectAll("rect")
+          .data(function(d) { console.log(d); return d; })
+          .attr("x", function(d) { return x(d.x); })
+          .attr("y", function(d) { return y(d.y + d.y0); })
+          .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+          .attr("width", x.rangeBand() - 1);
+*/
 
     // transition pie
     port.pieDat.data(pie(portUpdate.totals))
         .transition()
         .duration(200).attrTween("d", arcTween);
 
-    // transition labels
+    // transition pie labels
     port.pieLabels.data(pie(portUpdate.totals))
         .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
         .attr("dy", ".35em")
         .attr("class","arc")
-        .text(function(d) { return d.data.name + " (" + formatCurrency(d.data.val) + ")"; });
-
+        .html(function(d) { return d.value ? "(" + formatCurrency(d.data.val) + ")" : null; });
 }
+
+// Given an integer, will return it
+// formatted as USD ($xx,xxx.xx)
+function formatCurrency(d) {
+    return '$' + Math.abs(d).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+}
+
 
 // Store the displayed angles in _current.
 // Then, interpolate from _current to the new angles.
@@ -303,3 +324,36 @@ function arcTween(a) {
     return arc(i(t));
   };
 }
+
+
+function calcBar(data) {
+
+    // categories to show on the plot
+    var plotCols = ["contributions", "fee", "inflation", "interest"];
+
+    // subsample to every year
+    var dat = data.filter(function(value, index, Arr) {
+        return index % 12 == 0;
+    });
+
+    dat['columns'] = data.columns;
+
+    var layers = d3.layout.stack()(dat.columns.filter(function(l) {
+            if (plotCols.indexOf(l) > -1) {
+                return true;
+            }
+            return false;
+        }).map(function(c) {
+            return dat.map(function(d) {
+                return {x: d.year, y: d[c]};
+            });
+        })
+    )
+
+    layers.columns = plotCols;
+
+    return layers;
+
+}
+
+
