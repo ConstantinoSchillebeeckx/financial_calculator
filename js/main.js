@@ -1,5 +1,6 @@
 // MAIN
 
+var duration = 1500;
 var color = d3.scale.category10();
 var defaultCurrentAge = 25;
 var defaultRetirementAge = 65;

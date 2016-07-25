@@ -48,7 +48,7 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
     if (freq) {
         container.append("label")
             .attr('class','bottomLabel')
-            .text("Frequency")
+            .text("compounded")
 
 
         var select = container.append("select")
@@ -57,21 +57,21 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
 
         select.append("option")
             .attr("value",1)
-            .text("Once a year")
+            .text("once a year")
 
         select.append("option")
             .attr("value",3)
-            .text("Quarterly")
+            .text("quarterly")
 
         if (freqID == 'contribFreq') {
             select.append("option")
                 .attr("value",12)
                 .attr("selected",'')
-                .text("Monthly")
+                .text("monthly")
         } else {
             select.append("option")
                 .attr("value",12)
-                .text("Monthly")
+                .text("monthly")
         }
     }
 
@@ -86,8 +86,10 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
 
         },
         onSlide : function( position, value ) {
-            updatePlots(this.portfolio); 
             this.output.text(formatText(value, symbol));
+        },
+        onSlideEnd: function(position, value) {
+            updatePlots(this.portfolio); 
         }
     });
 
@@ -126,6 +128,9 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
     this.name = name;
     this.id = num_portfolio;
     this.profile = profile;
+    this.bar = {}; // store bar chart info
+    this.bar.axis = {};
+    this.pie = {}; // store pie chart info
 
     // rates in % (all assumed per year)
     this.rateOfReturn = rateOfReturn;
@@ -199,7 +204,8 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
 
 // return net value of portfolio
 Portfolio.prototype.netValue = function() {
-    return this.startingValue + this.totals[3].val;
+
+    return this.dat[this.profile.monthsToInvest - 1].capital;
 }
 
 
