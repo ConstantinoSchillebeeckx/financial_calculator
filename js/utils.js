@@ -118,7 +118,6 @@ function addPortfolio() {
         gui.append("p")
             .attr("class","lead")
             .html("Total portfolio value after " + portfolio.profile.yearsToInvest + " years is <mark><span id='netVal'>" + net + "</span></mark>");
-        console.log(portfolio);
         portfolios.set(id, portfolio);
     }
 
@@ -140,7 +139,6 @@ function removePortfolio(a) {
 // called everytime the GUI changes
 function updatePlots(id) {
 
-    console.log(id);
 
 
     var port = portfolios.get(id);
@@ -162,7 +160,6 @@ function updatePlots(id) {
     
 
     jQuery("#netVal").html(formatCurrency(portUpdate.netValue()));
-    console.log(portUpdate);
 
     // carry-over old portfolio attributes
     portUpdate.id = port.id;

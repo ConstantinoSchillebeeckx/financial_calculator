@@ -13,11 +13,6 @@ function Slider () {
 
 Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1, start=25, freq=false, freqID='') {
 
-    var tmp = jQuery('#slider-' + this.id).closest('.panel').attr('id');
-    if (tmp) {
-        var portID = tmp.split('-')[1];
-        // xxx not working
-    }
 
     function formatText(val, symbol) {
         if (symbol == '%') {
@@ -45,17 +40,20 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
         .attr("value",start)
         .attr("data-orientation","horizontal")
 
+    var tmp = jQuery('#slider-' + this.id).closest('.panel').attr('id');
+    if (tmp) {
+        var portID = tmp.split('-')[1];
+    }
+
     if (freq) {
         container.append("label")
             .attr('class','bottomLabel')
             .text("Frequency")
 
-        console.log(freqID);
-        console.log(portID);
 
         var select = container.append("select")
             .attr("id",freqID)
-            .attr('onchange','updatePlots(' + portID + ')'); // not being set properly
+            .attr('onchange','updatePlots(' + portID + ')'); 
 
         select.append("option")
             .attr("value",1)
@@ -65,9 +63,16 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
             .attr("value",3)
             .text("Quarterly")
 
-        select.append("option")
-            .attr("value",12)
-            .text("Monthly")
+        if (freqID == 'contribFreq') {
+            select.append("option")
+                .attr("value",12)
+                .attr("selected",'')
+                .text("Monthly")
+        } else {
+            select.append("option")
+                .attr("value",12)
+                .text("Monthly")
+        }
     }
 
 
@@ -114,7 +119,7 @@ Slider.prototype.get_val = function() {
 
 var num_portfolio = 0;
 
-function Portfolio (name="default", profile = new Profile("default"), rateOfReturn=6, fee=0.75, startingValue=42000, contributions=500, contributionFreqPerYear=12, compoundFreqPerYear=1, feeFreqPerYear=1) {
+function Portfolio (name="default", profile = new Profile("default"), rateOfReturn=defaultRateOfReturn, fee=defaultFee, startingValue=defaultStartingValue, contributions=defaultContributions, contributionFreqPerYear=defaultContribFreqPerYear, compoundFreqPerYear=defaultCompoundFreqPerYear, feeFreqPerYear=defaultFeeFreqPerYear) {
 
     num_portfolio += 1;
 
