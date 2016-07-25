@@ -32,75 +32,58 @@ Parameters:
 
 function init(div) {
 
-    var tmp = d3.select('body');
+    var tmp = d3.select(div);
 
-    var form = tmp.append("div")
+    var header = tmp.append("div")
         .attr("class","container-fluid")
         .attr("id","container")
       .append("div")
         .attr("class","row")
-      .append("div")
-        .attr("class","col-sm-12")
-      .append("form")
-        .attr("class","form-inline")
-        .attr("onsubmit","return false") // don't submit form
 
-    var col1 = form.append("div")
+    var col1 = header.append('div')
+        .attr('class','col-sm-3')
+    
+    currentAgeSlider = new Slider(); 
+    currentAgeSlider.add(col1, 'Current age', null, 20, 100, 1, defaultCurrentAge);
+
+    var col2 = header.append('div')
+        .attr('class','col-sm-3')
+    
+    retirementAgeSlider = new Slider(); 
+    retirementAgeSlider.add(col2, 'Retirement age', null, 40, 100, 1, defaultRetirementAge);
+
+    var col3 = header.append('div')
+        .attr('class','col-sm-3')
+    
+    inflationSlider = new Slider(); 
+    inflationSlider.add(col3, 'Inflation', '%', 0, 10, .1, defaultInflation);
+
+
+    var col4 = header.append("div")
         .attr("class","col-sm-3")
 
-    var slider1 = col1.append("div")
-        .attr("id","currentAge")
+    col4.append('label')
+        .attr('class','portfolioLabel')
+        .text('Portfolio name') 
     
-    slider1.append("label")
-        .html("Current age <span class='muted'>[" + defaultCurrentAge + "]</span>")
+    var portName = col4.append('div')
+        .attr('class','input-group')
 
-    slider1.append("div")
-        .attr("id","currentAgeSlider")
-        .attr("class","slider")
-
-    var slider2 = col1.append("div")
-        .attr("id","retirementAge")
-
-    slider2.append("label")
-        .html("Retirement age <span class='muted'>[" + defaultRetirementAge + "]</span>")
-
-    slider2.append("div")
-        .attr("id","retirementAgeSlider")
-        .attr("class","slider")
-
-    sliderCurrentAge = d3.slider().min(0).max(100).step(1).axis(true).value(defaultCurrentAge)
-                        .on("slide", function(evt, value) { 
-                            d3.select("#currentAge label").html("Current age <span class='muted'>[" + value + "]</span>");
-                            updatePlots(); 
-                        });
-    d3.select('#currentAgeSlider').call(sliderCurrentAge);
-
-    sliderRetirementAge = d3.slider().min(0).max(100).step(1).axis(true).value(defaultRetirementAge)
-                        .on("slide", function(evt, value) { 
-                            d3.select("#retirementAge label").html("Retirement age <span class='muted'>[" + value + "]</span>");
-                            updatePlots(this); 
-                        });
-    d3.select('#retirementAgeSlider').call(sliderRetirementAge);
-
-
-    var col2 = form.append("div")
-        .attr("class","col-sm-2")
-
-    col2.append("label")
-        .text("Portfolio name")
-      .append("input")
-        .attr("type","text")
-        .attr("class","form-control")
+    portName.append('input')
+        .attr('type','text')
+        .attr('class','form-control')
         .attr("id","portfolioName")
-        .attr("placeholder","401(k)") 
         .attr("value","401(k)")
+        .attr('placeholder','401(K)')
         .attr("required",'')
-        .attr("size",15)
 
-    col2.append("button")
+    portName.append('span')
+        .attr('class','input-group-btn')
+      .append('button')
+        .attr('class','btn btn-info')
         .attr("onclick","addPortfolio()")
-        .attr("class","btn btn-info")
-        .text("Add new portfolio")
+        .attr('type','button')
+        .html('<i class="fa fa-plus fa-lg" aria-hidden="true"></i>');
 
     addPortfolio();
 }

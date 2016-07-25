@@ -2,14 +2,12 @@
 
 function addPortfolio() {
 
-    var currentAge = sliderCurrentAge.value();
-    var retirementAge = sliderRetirementAge.value();
+
     var name = document.getElementById('portfolioName').value
 
+    if (name) {
 
-    if (name && retirementAge && currentAge) {
-
-        var profile = new Profile(name, currentAge, retirementAge, defaultInflation);
+        var profile = new Profile(name, defaultCurrentAge, defaultRetirementAge, defaultInflation);
         var portfolio = new Portfolio(name, profile, defaultRateOfReturn, defaultFee, defaultStartingValue, defaultContributions, defaultContribFreqPerYear, defaultCompoundFreqPerYear, defaultFeeFreqPerYear);
         var id = portfolio.id;
 
@@ -65,144 +63,37 @@ function addPortfolio() {
 
         var col0 = guiRow1.append("div")
             .attr("class","col-sm-3")
-
-        var slider0 = col0.append("div")
             .attr("id","startingValue")
-        
-        slider0.append("label")
-            .html("Starting capital <span class='muted'>[" + formatCurrency(defaultStartingValue) + "]</span>")
 
-        slider0.append("div")
-            .attr("id","startingValueSlider-" + id)
-            .attr("class","slider")
-
-        var startingValueSlider = d3.slider().min(0).max(50000).step(1000).axis(true).value(defaultStartingValue)
-                            .on("slide", function(evt, value) { 
-                                $("#startingValueSlider-" + id).parent().find("label").html("Starting capital <span class='muted'>[" + formatCurrency(value) + "]</span>");
-                                updatePlots(id); 
-                            });
+        startingValueSlider = new Slider(); 
+        startingValueSlider.add(col0, 'Starting capital', '$', 0, 50000, 1000, defaultStartingValue);
         portfolio.gui.startingValueSlider = startingValueSlider;
-        d3.select('#startingValueSlider-' + id).call(startingValueSlider);
-
 
         var col1 = guiRow1.append("div")
             .attr("class","col-sm-3")
+            .attr("id","startingValue")
 
-        var slider1 = col1.append("div")
-            .attr("id","rateOfReturn")
-        
-        slider1.append("label")
-            .html("Rate of return <span class='muted'>[" + defaultRateOfReturn.toFixed(1) + "%]</span>")
 
-        slider1.append("div")
-            .attr("id","rateOfReturnSlider-" + id)
-            .attr("class","slider")
-
-        var rateOfReturnSlider = d3.slider().min(0).max(15).step(0.1).axis(true).value(defaultRateOfReturn)
-                            .on("slide", function(evt, value) { 
-                                $("#rateOfReturnSlider-" + id).parent().find("label").html("Rate of return <span class='muted'>[" + value.toFixed(1) + "%]</span>");
-                                updatePlots(id); 
-                            });
+        rateOfReturnSlider = new Slider(); 
+        rateOfReturnSlider.add(col1, 'Rate of return', '%', 0, 15, 0.1, defaultRateOfReturn, true, 'compoundFreq');
         portfolio.gui.rateOfReturnSlider = rateOfReturnSlider;
-        d3.select('#rateOfReturnSlider-' + id).call(rateOfReturnSlider);
-
-        col1.append("label")
-            .text("Compound frequency")
-
-        var select = col1.append("select")
-                            .attr("id","compoundFreq")
-          
-        select.append("option")
-            .attr("value",1)
-            .text("Once a year")
-
-        select.append("option")
-            .attr("value",3)
-            .text("Quarterly")
-        
-        select.append("option")
-            .attr("value",12)
-            .text("Monthly")
-
 
         var col2 = guiRow1.append("div")
             .attr("class","col-sm-3")
+            .attr("id","startingValue")
 
-        var slider1 = col2.append("div")
-            .attr("id","fee")
-        
-        slider1.append("label")
-            .html("Total fee <span class='muted'>[" + defaultFee.toFixed(1) + "%]</span>")
-
-        slider1.append("div")
-            .attr("id","feeSlider-" + id)
-            .attr("class","slider")
-
-        var feeSlider = d3.slider().min(0).max(15).step(0.1).axis(true).value(defaultFee)
-                            .on("slide", function(evt, value) { 
-                                $("#feeSlider-" + id).parent().find("label").html("Total fee <span class='muted'>[" + value.toFixed(1) + "%]</span>");
-                                updatePlots(id); 
-                            });
+        feeSlider = new Slider(); 
+        feeSlider.add(col2, 'Overall fee', '%', 0, 15, 0.1, defaultFee, true, 'feeFreq');
         portfolio.gui.feeSlider = feeSlider
-        d3.select('#feeSlider-' + id).call(feeSlider);
 
-        col2.append("label")
-            .text("Fee compound frequency")
-
-        var select2 = col2.append("select")
-                            .attr("id","feeFreq")
-          
-        select2.append("option")
-            .attr("value",1)
-            .text("Once a year")
-
-        select2.append("option")
-            .attr("value",3)
-            .text("Quarterly")
-        
-        select2.append("option")
-            .attr("value",12)
-            .text("Monthly")
-
-
-        var col2 = guiRow1.append("div")
+        var col3 = guiRow1.append("div")
             .attr("class","col-sm-3")
+            .attr("id","startingValue")
 
-        var slider1 = col2.append("div")
-            .attr("id","contributions")
-        
-        slider1.append("label")
-            .html("Contributions <span class='muted'>[" + formatCurrency(defaultContributions) + "]</span>")
+        contributionSlider = new Slider(); 
+        contributionSlider.add(col3, 'Contributions', '$', 0, 5000, 100, defaultContributions, true, 'contribFreq');
+        portfolio.gui.contributionSlider = contributionSlider
 
-        slider1.append("div")
-            .attr("id","contributionSlider-" + id)
-            .attr("class","slider")
-
-        var contributionSlider = d3.slider().min(0).max(5000).step(100).axis(true).value(defaultContributions)
-                            .on("slide", function(evt, value) { 
-                                $("#contributionSlider-" + id).parent().find("label").html("Contributions <span class='muted'>[" + formatCurrency(value) + "]</span>");
-                                updatePlots(id); 
-                            });
-        portfolio.gui.contributionSlider = contributionSlider;
-        d3.select('#contributionSlider-' + id).call(contributionSlider);
-
-        col2.append("label")
-            .text("Contribution frequency")
-
-        var select2 = col2.append("select")
-                            .attr("id","contribFreq")
-          
-        select2.append("option")
-            .attr("value",1)
-            .text("Once a year")
-
-        select2.append("option")
-            .attr("value",3)
-            .text("Quarterly")
-        
-        select2.append("option")
-            .attr("value",12)
-            .text("Monthly")
 
 
         // accordion gui ----------------------------------
@@ -227,8 +118,7 @@ function addPortfolio() {
         gui.append("p")
             .attr("class","lead")
             .html("Total portfolio value after " + portfolio.profile.yearsToInvest + " years is <mark><span id='netVal'>" + net + "</span></mark>");
-
-
+        console.log(portfolio);
         portfolios.set(id, portfolio);
     }
 
@@ -250,6 +140,9 @@ function removePortfolio(a) {
 // called everytime the GUI changes
 function updatePlots(id) {
 
+    console.log(id);
+
+
     var port = portfolios.get(id);
     var portDom = jQuery("#portfolio-"+id);
     var contribFreq = parseInt(portDom.find("#contribFreq").val());
@@ -259,14 +152,17 @@ function updatePlots(id) {
     // calculate new portofolio totals
     var portUpdate = new Portfolio(port.name, 
                                    port.profile, 
-                                   port.gui.rateOfReturnSlider.value(),
-                                   port.gui.feeSlider.value(),
-                                   port.gui.startingValueSlider.value(),
-                                   port.gui.contributionSlider.value(),
+                                   port.gui.rateOfReturnSlider.get_val(),
+                                   port.gui.feeSlider.get_val(),
+                                   port.gui.startingValueSlider.get_val(),
+                                   port.gui.contributionSlider.get_val(),
                                    contribFreq, compoundFreq, feeFreq
                                   )
 
+    
+
     jQuery("#netVal").html(formatCurrency(portUpdate.netValue()));
+    console.log(portUpdate);
 
     // carry-over old portfolio attributes
     portUpdate.id = port.id;

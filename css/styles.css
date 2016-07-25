@@ -35,6 +35,22 @@ span.muted {
     font-weight: 300;
 }
 
+.sliderLabel {
+    margin-bottom: 20px;
+}
+
+.bottomLabel {
+    margin-top: 20px;
+}
+
+.portfolioLabel {
+    margin-bottom: 10px;
+}
+
+#container {
+    margin-top: 10px;
+}
+
 div.form-group, form button {
     margin-left: 2px;
     margin-right: 2px;

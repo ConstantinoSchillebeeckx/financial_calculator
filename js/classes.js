@@ -1,5 +1,117 @@
 // MAIN
 
+var num_slider = 0;
+
+function Slider () {
+    
+    num_slider += 1;
+
+    this.id = num_slider;
+
+}
+
+
+Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1, start=25, freq=false, freqID='') {
+
+    var tmp = jQuery('#slider-' + this.id).closest('.panel').attr('id');
+    if (tmp) {
+        var portID = tmp.split('-')[1];
+        // xxx not working
+    }
+
+    function formatText(val, symbol) {
+        if (symbol == '%') {
+            return ' [' + val + '%]';
+        } else if (symbol == '$') {
+            return ' [' + formatCurrency(val) + ']';
+        } else {
+            return ' [' + val + ']';
+        }
+    }
+
+    var container = sel.append("div")
+        .attr("id","slider-" + this.id);
+
+    var label = container.append("label")
+        .attr("class","sliderLabel")
+        .html(labelText);
+        
+
+    var slide = container.append("input")
+        .attr("type","range")
+        .attr("min",min)
+        .attr("max",max)
+        .attr("step",step)
+        .attr("value",start)
+        .attr("data-orientation","horizontal")
+
+    if (freq) {
+        container.append("label")
+            .attr('class','bottomLabel')
+            .text("Frequency")
+
+        console.log(freqID);
+        console.log(portID);
+
+        var select = container.append("select")
+            .attr("id",freqID)
+            .attr('onchange','updatePlots(' + portID + ')'); // not being set properly
+
+        select.append("option")
+            .attr("value",1)
+            .text("Once a year")
+
+        select.append("option")
+            .attr("value",3)
+            .text("Quarterly")
+
+        select.append("option")
+            .attr("value",12)
+            .text("Monthly")
+    }
+
+
+    var obj = jQuery('#slider-' + this.id).find('input[type="range"]').rangeslider({
+        polyfill : false,
+        onInit : function() {
+            this.portfolio = portID;
+            this.output = label.append('span')
+                .attr("class","muted")
+                .text(formatText(this.$element.val(), symbol));
+
+        },
+        onSlide : function( position, value ) {
+            updatePlots(this.portfolio); 
+            this.output.text(formatText(value, symbol));
+        }
+    });
+
+    this.name = labelText;
+    this.symbol = symbol;
+    this.obj = obj;
+
+};
+
+Slider.prototype.get_val = function() {
+    return parseFloat(this.obj.val());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var num_portfolio = 0;
 
 function Portfolio (name="default", profile = new Profile("default"), rateOfReturn=6, fee=0.75, startingValue=42000, contributions=500, contributionFreqPerYear=12, compoundFreqPerYear=1, feeFreqPerYear=1) {
