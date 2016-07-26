@@ -216,7 +216,7 @@ Portfolio.prototype.calcVals = function(rateOfReturn, fee, startingValue, contri
 }
 
 
-/* Will updat the user profile class
+/* Function to update profile when global sliders are moved
 
 Once called, will update the portfolio within the porfolios map
 
@@ -225,18 +225,17 @@ Portfolio.prototype.updateProfile = function(age, retirementAge, inflation) {
 
     var profile = this.profile;
     var id = this.id;
-    console.log(id)
 
     profile.age = age;
     profile.retirementAge = retirementAge;
     profile.inflation = inflation / 100;
 
+    // re-calculate profile values
     profile.yearsToInvest = retirementAge - age;
     profile.monthsToInvest = profile.yearsToInvest * 12;
 
     portfolios.set(id, this);
 
-    console.log(portfolios);
 }
 
 

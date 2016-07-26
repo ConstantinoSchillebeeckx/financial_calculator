@@ -140,8 +140,8 @@ function stackedBar(portfolio, div) {
     var layers = calcBar(portfolio.dat);
 
     var margin = {top: 10, right: 0, bottom: 50, left: 90},
-        width = d3.select(div).node().clientWidth - margin.left - margin.right,
-        height = width * 0.5 - margin.top - margin.bottom
+        width = d3.select(div).node().clientWidth - margin.left - margin.right;
+    height = width * 0.5 - margin.top - margin.bottom
 
     var svg = d3.select(div)
         .append('svg')
@@ -237,6 +237,7 @@ function stackedBar(portfolio, div) {
 // transition bar elements
 function drawBar(portfolio) {
 
+
     var layers = calcBar(portfolio.dat);
     var x = portfolio.bar.x;
     var y = portfolio.bar.y;
@@ -249,11 +250,36 @@ function drawBar(portfolio) {
     x.domain(layers[0].map(function(d) { return d.x; }));
     y.domain([0, d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
 
-
-
-    svg.selectAll(".layer")
+    var bars = svg.selectAll(".layer")
         .data(layers)
-      .selectAll("rect")
+
+
+    // exit bars
+    bars.exit(function(d) { console.log(d) })
+        .transition()
+        .duration(duration)
+        .attr("y", height )
+        .attr("height", 0)
+        .style('fill-opacity', 1e-6)
+        .remove()
+
+    // add bars for those entering
+    bars.enter()
+      .append("g")
+      .attr("class", "layer")
+      .style("fill", function(d, i) { return color(layers.columns[i]); })
+    .selectAll("rect")
+      .data(function(d) { return d; })
+      .enter()
+      .append('rect')
+      .attr("y", height )
+      .attr("height", 0)
+      //.on('mouseover', tipBar.show)
+      //.on('mouseout', tipBar.hide)
+          
+
+    // transition bars to proper height/pos
+    bars.selectAll("rect")
         .data(function(d) { return d; })
         .transition()
         .duration(duration)
@@ -270,6 +296,8 @@ function drawBar(portfolio) {
       .selectAll("text")
         .attr("y", -2)
         .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(90)")
         .style("text-anchor", "start");
 
     svg.select('.y.axis').transition().duration(duration).call(yAxis);
