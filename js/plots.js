@@ -185,7 +185,6 @@ function stackedBar(portfolio, div) {
 function drawBar(portfolio) {
 
     var layers = calcBar(portfolio.dat);
-    console.log(layers)
     var x = portfolio.bar.x;
     var y = portfolio.bar.y;
     var xAxis = portfolio.bar.axis.x;

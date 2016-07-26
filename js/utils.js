@@ -205,7 +205,6 @@ function calcBar(data) {
         return index % 12 == 0;
     });
 
-    console.log(dat)
 
     dat['columns'] = data.columns;
 
