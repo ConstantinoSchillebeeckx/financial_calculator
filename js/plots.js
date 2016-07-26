@@ -14,7 +14,12 @@ var pie = d3.layout.pie()
     .value(function(d) { return Math.abs(d.val); });
 function plotPie(portfolio, div) {
 
-    var dat = pie(portfolio.totals);
+    // set initial data to 0 so that we can transition from zero
+    var tmp = [{'name':'fee', 'val':0},
+                {'name':'contributions', 'val':0},
+                {'name':'inflation', 'val':0},
+                {'name':'interest', 'val':0}];
+    var dat = pie(tmp);
 
     var margin = {top: 10, right: 10, bottom: 10, left: 10};
     var width = d3.select(div).node().clientWidth - margin.left - margin.right;
@@ -57,6 +62,8 @@ function plotPie(portfolio, div) {
     portfolio.pie.slices = pieSlices;
     portfolio.pie.labels = pieLabels;
 
+    drawPie(portfolio);
+
     return portfolio;
 }
 
@@ -64,6 +71,9 @@ function plotPie(portfolio, div) {
 function drawPie(portfolio) {
 
     var dat = pie(portfolio.totals);
+
+    console.log(portfolio.totals)
+
     var slices = portfolio.pie.slices;
     var labels = portfolio.pie.labels;
 

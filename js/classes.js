@@ -131,11 +131,22 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
     this.bar = {}; // store bar chart info
     this.bar.axis = {};
     this.pie = {}; // store pie chart info
+    this.gui = {}; // will be filled with sliders associated with portfolio
 
-    // rates in % (all assumed per year)
-    this.rateOfReturn = rateOfReturn / 100.0;
-    this.fee = fee / 100.0
+    this.calcVals(rateOfReturn, fee, startingValue, contributions, contributionFreqPerYear, compoundFreqPerYear, feeFreqPerYear);
 
+}
+
+// return net value of portfolio
+Portfolio.prototype.netValue = function() {
+
+    return this.dat[this.profile.monthsToInvest - 1].capital;
+}
+
+
+Portfolio.prototype.calcVals = function(rateOfReturn, fee, startingValue, contributions, contributionFreqPerYear, compoundFreqPerYear, feeFreqPerYear) {
+
+    this.feeFreqPerYear = feeFreqPerYear;
     this.startingValue = startingValue; // starting fund value
     this.contributions = contributions; // contribution value
     this.contributionFreqPerYear = contributionFreqPerYear; // how often money is contributed to account (12: monthly, 1: yearly)
@@ -143,8 +154,10 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
     this.feeFreqPerYear; // how often fee is charged (12: monthly, 1: yearly)
     this.startYear = new Date().getFullYear();
     this.startMonth = new Date().getMonth();
-    this.gui = {}; // will be filled with sliders associated with portfolio
 
+    // rates in % (all assumed per year)
+    this.rateOfReturn = rateOfReturn / 100.0;
+    this.fee = fee / 100.0
 
     // calculate portfolio change over time
     // assumes compounded on current month and then every freq period there after
@@ -159,20 +172,20 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
         dat[i].year = yearSum;
 
         // contributions
-        if (i % (12 / contributionFreqPerYear) == 0) {
+        if (i % (12 / this.contributionFreqPerYear) == 0) {
             dat[i].contributions = this.contributions;
         }
 
         // fees
-        if (i % (12 / feeFreqPerYear) == 0) {
-            dat[i].fee = capitalSum * this.fee / feeFreqPerYear;
+        if (i % (12 / this.feeFreqPerYear) == 0) {
+            dat[i].fee = capitalSum * this.fee / this.feeFreqPerYear;
         } else {
             dat[i].fee = 0
         }
             
         // interest
-        if (i % (12 / compoundFreqPerYear) == 0) {
-            dat[i].interest = capitalSum * this.rateOfReturn / compoundFreqPerYear;
+        if (i % (12 / this.compoundFreqPerYear) == 0) {
+            dat[i].interest = capitalSum * this.rateOfReturn / this.compoundFreqPerYear;
         } else {
             dat[i].interest = 0;
         }
@@ -185,7 +198,7 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
         }
 
         // capital
-        if (i % (12 / contributionFreqPerYear) == 0) {
+        if (i % (12 / this.contributionFreqPerYear) == 0) {
             capitalSum = capitalSum - dat[i].fee + dat[i].interest - dat[i].inflation + dat[i].contributions;
         }
         dat[i].capital = capitalSum;
@@ -195,18 +208,15 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
 
     // calculate totals
     var totals = [];
-    totals.push({'name': 'fee','val': d3.sum(dat, function(d) { return d.fee; })});
-    totals.push({'name':'contributions','val': d3.sum(dat, function(d) { return d.contributions; })});
-    totals.push({'name':'inflation','val': d3.sum(dat, function(d) { return d.inflation; })});
-    totals.push({'name':'interest','val': d3.sum(dat, function(d) { return d.interest; })});
+    totals.push({'name': 'fee','val': d3.sum(this.dat, function(d) { return d.fee; })});
+    totals.push({'name':'contributions','val': d3.sum(this.dat, function(d) { return d.contributions; })});
+    totals.push({'name':'inflation','val': d3.sum(this.dat, function(d) { return d.inflation; })});
+    totals.push({'name':'interest','val': d3.sum(this.dat, function(d) { return d.interest; })});
     this.totals = totals;
 }
 
-// return net value of portfolio
-Portfolio.prototype.netValue = function() {
 
-    return this.dat[this.profile.monthsToInvest - 1].capital;
-}
+
 
 
 function Profile (name, age=32, retirementAge=65, inflation=2) {

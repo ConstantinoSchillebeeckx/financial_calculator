@@ -148,32 +148,23 @@ function updatePlots(id) {
     var compoundFreq = parseInt(portDom.find("#compoundFreq").val());
 
     // calculate new portofolio totals (specifically .data & .totals)
-    var portUpdate = new Portfolio(port.name, 
-                                   port.profile, 
-                                   port.gui.rateOfReturnSlider.get_val(),
-                                   port.gui.feeSlider.get_val(),
-                                   port.gui.startingValueSlider.get_val(),
-                                   port.gui.contributionSlider.get_val(),
-                                   contribFreq, compoundFreq, feeFreq
-                                  )
+    port.calcVals(port.gui.rateOfReturnSlider.get_val(),
+                  port.gui.feeSlider.get_val(),
+                  port.gui.startingValueSlider.get_val(),
+                  port.gui.contributionSlider.get_val(),
+                  contribFreq, compoundFreq, feeFreq
+                  )
 
-    jQuery("#netVal").html(formatCurrency(portUpdate.netValue()));
-
-    // carry-over old portfolio attributes
-    portUpdate.id = port.id;
-    portUpdate.gui = port.gui;
-    portUpdate.pie = port.pie;
-    portUpdate.bar = port.bar;
-
+    jQuery("#netVal").html(formatCurrency(port.netValue()));
 
     // transition bar chart
-    drawBar(portUpdate);
+    drawBar(port);
 
     // transition pie
-    drawPie(portUpdate);
+    drawPie(port);
 
     // update portfolio with new numbers
-    portfolios.set(id, portUpdate);
+    portfolios.set(id, port);
 }
 
 // Given an integer, will return it
