@@ -1,5 +1,12 @@
-/* Render a pie plot
 
+
+/* -------------------------------------------
+
+                PIE PLOT
+
+----------------------------------------------*/
+
+/*
 TODO
 
 Parameters:
@@ -12,6 +19,14 @@ Parameters:
 var pie = d3.layout.pie()
     .sort(null)
     .value(function(d) { return Math.abs(d.val); });
+
+var tipPie = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<strong>Frequency:</strong> <span style='color:red'>" + d + "</span>";
+  })
+
 function plotPie(portfolio, div) {
 
     // set initial data to 0 so that we can transition from zero
@@ -42,6 +57,8 @@ function plotPie(portfolio, div) {
       .append("g")
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
+    svg.call(tipPie);
+
     portfolio.pie.svg = svg;
 
     var pieSlices = svg.selectAll("path")
@@ -49,7 +66,9 @@ function plotPie(portfolio, div) {
       .enter().append("path")
         .style("fill", function(d) { return color(d.data.name); })
         .attr("d",arc)
-        .each(function(d) { this._current = d; }); // store the initial angles
+        .each(function(d) { this._current = d; }) // store the initial angles
+        //.on('mouseover', tipPie.show)
+        //.on('mouseout', tipPie.hide)
 
     var pieLabels = svg.selectAll("text")
         .data(dat)
@@ -57,7 +76,7 @@ function plotPie(portfolio, div) {
         .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
         .attr("dy", ".35em")
         .attr("class","arc")
-        .html(function(d) { return d.value ? "(" + formatCurrency(d.data.val) + ")" : null; });
+        .html(function(d) { return d.value ? formatCurrency(d.data.val) : null; })
 
     portfolio.pie.slices = pieSlices;
     portfolio.pie.labels = pieLabels;
@@ -72,7 +91,6 @@ function drawPie(portfolio) {
 
     var dat = pie(portfolio.totals);
 
-    console.log(portfolio.totals)
 
     var slices = portfolio.pie.slices;
     var labels = portfolio.pie.labels;
@@ -91,9 +109,30 @@ function drawPie(portfolio) {
 
     // can't transition text
     labels.data(dat)
-        .html(function(d) { return d.value ? "(" + formatCurrency(d.data.val) + ")" : null; });
+        .html(function(d) { return d.value ? formatCurrency(d.data.val) : null; });
 
 }
+
+
+
+
+
+
+
+
+/* -------------------------------------------
+
+                BAR CHART
+
+----------------------------------------------*/
+
+
+var tipBar = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<strong>Frequency:</strong> <span style='color:red'>" + d + "</span>";
+  })
 
 
 function stackedBar(portfolio, div) {
@@ -110,6 +149,8 @@ function stackedBar(portfolio, div) {
           .attr("width",width + margin.left + margin.right)
           .attr("height",height + margin.top + margin.bottom)
         .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.call(tipBar);
 
     portfolio.bar.svg = svg;
 
@@ -145,6 +186,8 @@ function stackedBar(portfolio, div) {
       .append('rect')
       .attr("y", height )
       .attr("height", 0)
+      //.on('mouseover', tipBar.show)
+      //.on('mouseout', tipBar.hide)
 
 
     var legend = svg.selectAll(".legend")
@@ -205,6 +248,8 @@ function drawBar(portfolio) {
 
     x.domain(layers[0].map(function(d) { return d.x; }));
     y.domain([0, d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
+
+
 
     svg.selectAll(".layer")
         .data(layers)

@@ -119,7 +119,7 @@ function addPortfolio() {
         var net = formatCurrency(portfolio.netValue());
         gui.append("p")
             .attr("class","lead")
-            .html("Total portfolio value after " + portfolio.profile.yearsToInvest + " years is <span id='netVal' class='label label-success'>" + net + "</span>");
+            .html("Total portfolio value after <span id='duration'>" + portfolio.profile.yearsToInvest + "</span> years is <span id='netVal' class='label label-success'>" + net + "</span>");
         portfolios.set(id, portfolio);
     }
 
@@ -141,31 +141,52 @@ function removePortfolio(a) {
 // called everytime the GUI changes
 function updatePlots(id) {
 
-    var port = portfolios.get(id);
-    var portDom = jQuery("#portfolio-"+id);
-    var contribFreq = parseInt(portDom.find("#contribFreq").val());
-    var feeFreq = parseInt(portDom.find("#feeFreq").val());
-    var compoundFreq = parseInt(portDom.find("#compoundFreq").val());
+    var toUpdate = [];
+    if (id) { // if updating a single portfolio
+        toUpdate = [id];
 
-    // calculate new portofolio totals (specifically .data & .totals)
-    port.calcVals(port.gui.rateOfReturnSlider.get_val(),
-                  port.gui.feeSlider.get_val(),
-                  port.gui.startingValueSlider.get_val(),
-                  port.gui.contributionSlider.get_val(),
-                  contribFreq, compoundFreq, feeFreq
-                  )
+    } else { // if updating all portfolios (e.g. age sliders)
+        portfolios.forEach(function(id, port) {
+            toUpdate.push(id);
+            port.updateProfile(currentAgeSlider.get_val(), retirementAgeSlider.get_val(), inflationSlider.get_val())
+        })
+    }
 
-    jQuery("#netVal").html(formatCurrency(port.netValue()));
+    for (var i = 0; i < toUpdate.length; i++) {
+        id = toUpdate[i];
 
-    // transition bar chart
-    drawBar(port);
+        var port = portfolios.get(id);
+        var portDom = jQuery("#portfolio-"+id);
+        var contribFreq = parseInt(portDom.find("#contribFreq").val());
+        var feeFreq = parseInt(portDom.find("#feeFreq").val());
+        var compoundFreq = parseInt(portDom.find("#compoundFreq").val());
 
-    // transition pie
-    drawPie(port);
+        // calculate new portofolio totals (specifically .data & .totals)
+        port.calcVals(port.gui.rateOfReturnSlider.get_val(),
+                      port.gui.feeSlider.get_val(),
+                      port.gui.startingValueSlider.get_val(),
+                      port.gui.contributionSlider.get_val(),
+                      contribFreq, compoundFreq, feeFreq
+                      )
 
-    // update portfolio with new numbers
-    portfolios.set(id, port);
+        jQuery("#netVal").html(formatCurrency(port.netValue()));
+        jQuery("#duration").html(port.profile.yearsToInvest);
+
+        // transition bar chart
+        drawBar(port);
+
+        // transition pie
+        drawPie(port);
+
+        // update portfolio with new numbers
+        portfolios.set(id, port);
+    } 
+
+
 }
+
+
+
 
 // Given an integer, will return it
 // formatted as USD ($xx,xxx.xx)
