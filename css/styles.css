@@ -3,8 +3,10 @@ body {
 }
 
 text.arc {
-  font: 10px sans-serif;
+  font: 12px sans-serif;
+  font-weight: 300;
   text-anchor: middle;
+  fill: white;
 }
 
 .arc path {

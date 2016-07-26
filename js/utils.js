@@ -115,6 +115,7 @@ function addPortfolio() {
         portfolio = stackedBar(portfolio, '#barPlot' + portfolio.id)
         portfolio = plotPie(portfolio, '#piePlot' + portfolio.id)
 
+
         var net = formatCurrency(portfolio.netValue());
         gui.append("p")
             .attr("class","lead")
@@ -156,8 +157,6 @@ function updatePlots(id) {
                                    contribFreq, compoundFreq, feeFreq
                                   )
 
-    console.log(portUpdate.netValue());
-
     jQuery("#netVal").html(formatCurrency(portUpdate.netValue()));
 
     // carry-over old portfolio attributes
@@ -165,6 +164,7 @@ function updatePlots(id) {
     portUpdate.gui = port.gui;
     portUpdate.pie = port.pie;
     portUpdate.bar = port.bar;
+
 
     // transition bar chart
     drawBar(portUpdate);
@@ -204,6 +204,8 @@ function calcBar(data) {
     var dat = data.filter(function(value, index, Arr) {
         return index % 12 == 0;
     });
+
+    console.log(dat)
 
     dat['columns'] = data.columns;
 

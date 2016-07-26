@@ -124,7 +124,7 @@ function stackedBar(portfolio, div) {
     portfolio.bar.axis.x = xAxis;
     portfolio.bar.axis.y = yAxis;
 
-    var bars = svg.selectAll(".layer")
+    svg.selectAll(".layer")
       .data(layers)
     .enter().append("g")
       .attr("class", "layer")
@@ -136,7 +136,6 @@ function stackedBar(portfolio, div) {
       .attr("y", height )
       .attr("height", 0)
 
-    portfolio.bar.bars = bars;
 
     var legend = svg.selectAll(".legend")
       .data(layers.columns)
@@ -186,6 +185,7 @@ function stackedBar(portfolio, div) {
 function drawBar(portfolio) {
 
     var layers = calcBar(portfolio.dat);
+    console.log(layers)
     var x = portfolio.bar.x;
     var y = portfolio.bar.y;
     var xAxis = portfolio.bar.axis.x;
@@ -197,12 +197,17 @@ function drawBar(portfolio) {
     x.domain(layers[0].map(function(d) { return d.x; }));
     y.domain([0, d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
 
-    bars.transition()
+    svg.selectAll(".layer")
+        .data(layers)
+      .selectAll("rect")
+        .data(function(d) { return d; })
+        .transition()
         .duration(duration)
-      .attr("x", function(d) { return x(d.x); })
-      .attr("y", function(d) { return y(d.y + d.y0); })
-      .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
-      .attr("width", x.rangeBand() - 1);
+        .attr("x", function(d) { return x(d.x); })
+        .attr("y", function(d) { return y(d.y + d.y0); })
+        .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+        .attr("width", x.rangeBand() - 1);
+
 
     svg.select('.x.axis')
         .transition()

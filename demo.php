@@ -24,13 +24,13 @@
         <script src="js/utils.js"></script>
         <script src="js/classes.js"></script>
         <script src="js/plots.js"></script>
+        <script src="js/main.js"></script>
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
 
     <body onload="init('body')"> </body>
 
-    <script src="js/main.js"></script>
 </html>
 
 

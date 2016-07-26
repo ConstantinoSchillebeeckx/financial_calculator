@@ -133,8 +133,8 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
     this.pie = {}; // store pie chart info
 
     // rates in % (all assumed per year)
-    this.rateOfReturn = rateOfReturn;
-    this.fee = fee
+    this.rateOfReturn = rateOfReturn / 100.0;
+    this.fee = fee / 100.0
 
     this.startingValue = startingValue; // starting fund value
     this.contributions = contributions; // contribution value
@@ -148,7 +148,7 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
 
     // calculate portfolio change over time
     // assumes compounded on current month and then every freq period there after
-    var yearSum = this.startYear;
+    var yearSum = this.startYear + 1;
     var capitalSum = this.startingValue;
     var dat = [];
     for (var i = 0; i < this.profile.monthsToInvest; i ++) {
@@ -165,21 +165,21 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
 
         // fees
         if (i % (12 / feeFreqPerYear) == 0) {
-            dat[i].fee = capitalSum * this.fee / (feeFreqPerYear * 100.0);
+            dat[i].fee = capitalSum * this.fee / feeFreqPerYear;
         } else {
             dat[i].fee = 0
         }
             
         // interest
         if (i % (12 / compoundFreqPerYear) == 0) {
-            dat[i].interest = capitalSum * this.rateOfReturn / (compoundFreqPerYear * 100.0);
+            dat[i].interest = capitalSum * this.rateOfReturn / compoundFreqPerYear;
         } else {
             dat[i].interest = 0;
         }
             
         // inflation
         if (i % 12 == 0) {
-            dat[i].inflation = capitalSum * this.profile.inflation / 100.0;
+            dat[i].inflation = capitalSum * this.profile.inflation;
         } else {
             dat[i].inflation = 0;
         }
@@ -212,9 +212,9 @@ Portfolio.prototype.netValue = function() {
 function Profile (name, age=32, retirementAge=65, inflation=2) {
 
     this.name = name;
-    this.age = age;
+    this.age = age + 1; // +1 because we don't compound this year
     this.retirementAge = retirementAge;
-    this.inflation = inflation;
+    this.inflation = inflation / 100.0;
 
     this.yearsToInvest = this.retirementAge - this.age;
     this.monthsToInvest = this.yearsToInvest * 12;
