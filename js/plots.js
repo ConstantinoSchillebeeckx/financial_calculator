@@ -67,8 +67,6 @@ function plotPie(portfolio, div) {
         .style("fill", function(d) { return color(d.data.name); })
         .attr("d",arc)
         .each(function(d) { this._current = d; }) // store the initial angles
-        //.on('mouseover', tipPie.show)
-        //.on('mouseout', tipPie.hide)
 
     var pieLabels = svg.selectAll("text")
         .data(dat)
@@ -182,8 +180,6 @@ function stackedBar(portfolio, div) {
     svg.selectAll(".layer")
       .data(layers)
     .enter().append("g")
-      .on('mouseover', tipBar.show)
-      .on('mouseout', tipBar.hide)
       .attr("class", "layer")
     .selectAll("rect")
       .data(function(d) { return d; })
@@ -273,8 +269,6 @@ function drawBar(portfolio) {
     bars.enter()
       .append("g")
       .attr("class", "layer")
-      .on('mouseover', tipBar.show)
-      .on('mouseout', tipBar.hide)
     .selectAll("rect")
       .data(function(d) { return d; })
       .enter()

@@ -7,7 +7,7 @@ function addPortfolio() {
 
     if (name) {
 
-        var profile = new Profile(name, defaultCurrentAge, defaultRetirementAge, defaultInflation);
+        var profile = new Profile(name, currentAgeSlider.get_val(), retirementAgeSlider.get_val(), inflationSlider.get_val());
         var portfolio = new Portfolio(name, profile, defaultRateOfReturn, defaultFee, defaultStartingValue, defaultContributions, defaultContribFreqPerYear, defaultCompoundFreqPerYear, defaultFeeFreqPerYear);
         var id = portfolio.id;
 
@@ -169,8 +169,8 @@ function updatePlots(id) {
                       contribFreq, compoundFreq, feeFreq
                       )
 
-        jQuery("#netVal").html(formatCurrency(port.netValue()));
-        jQuery("#duration").html(port.profile.yearsToInvest);
+        jQuery("#portfolio-" + id + " #netVal").html(formatCurrency(port.netValue()));
+        jQuery("#portfolio-" + id + " #duration").html(port.profile.yearsToInvest);
 
         // transition bar chart
         drawBar(port);
