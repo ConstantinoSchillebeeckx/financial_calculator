@@ -232,9 +232,24 @@ function calcBar(data) {
         })
     )
 
-    layers.columns = plotCols;
 
-    return layers;
+    // reformat data so that instead of a group for each plotCol
+    // we have a group for each year, this makes tooltip and
+    // entering/exiting data do-able
+    var convert = [];
+    layers.map(function(col, i) {
+        col.map(function(year, j) {
+            if (!i) {
+                convert.push([]);
+            }
+            year.name = plotCols[i];
+            convert[j].push(year);
+        })
+    })
+
+    layers.columns = plotCols;
+    convert.columns = plotCols;
+    return convert;
 
 }
 

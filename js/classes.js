@@ -48,7 +48,14 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
     if (freq) {
         container.append("label")
             .attr('class','bottomLabel')
-            .text("compounded")
+            .text( function(d) {
+                 if (labelText == 'Contributions') {
+                    return 'deposit freq.';
+                } else {
+                    return 'compounded';
+                }
+            })
+
 
 
         var select = container.append("select")

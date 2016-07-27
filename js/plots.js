@@ -57,7 +57,7 @@ function plotPie(portfolio, div) {
       .append("g")
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-    svg.call(tipPie);
+    //svg.call(tipPie);
 
     portfolio.pie.svg = svg;
 
@@ -131,7 +131,11 @@ var tipBar = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
-    return "<strong>Frequency:</strong> <span style='color:red'>" + d + "</span>";
+    var html = '<span style="color:red">' + d[0].x + '</span><hr>' // year
+    d.map(function(e) {
+        html += '<p>' + e.name + ': ' + formatCurrency(e.y0 + e.y) + '</p><br>';
+    });
+    return html;
   })
 
 
@@ -139,8 +143,8 @@ function stackedBar(portfolio, div) {
 
     var layers = calcBar(portfolio.dat);
 
-    var margin = {top: 10, right: 0, bottom: 50, left: 90},
-        width = d3.select(div).node().clientWidth - margin.left - margin.right;
+    var margin = {top: 10, right: 0, bottom: 50, left: 90};
+    width = d3.select(div).node().clientWidth - margin.left - margin.right;
     height = width * 0.5 - margin.top - margin.bottom
 
     var svg = d3.select(div)
@@ -150,7 +154,7 @@ function stackedBar(portfolio, div) {
           .attr("height",height + margin.top + margin.bottom)
         .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    svg.call(tipBar);
+    //svg.call(tipBar);
 
     portfolio.bar.svg = svg;
 
@@ -178,16 +182,16 @@ function stackedBar(portfolio, div) {
     svg.selectAll(".layer")
       .data(layers)
     .enter().append("g")
+      .on('mouseover', tipBar.show)
+      .on('mouseout', tipBar.hide)
       .attr("class", "layer")
-      .style("fill", function(d, i) { return color(layers.columns[i]); })
     .selectAll("rect")
       .data(function(d) { return d; })
       .enter()
       .append('rect')
+      .style("fill", function(d, i) { return color(layers.columns[i]); })
       .attr("y", height )
       .attr("height", 0)
-      //.on('mouseover', tipBar.show)
-      //.on('mouseout', tipBar.hide)
 
 
     var legend = svg.selectAll(".legend")
@@ -210,7 +214,8 @@ function stackedBar(portfolio, div) {
         .attr("text-anchor", "start")
         .text(function(d) { return d; });
 
-    x.domain(layers[0].map(function(d) { return d.x; }));
+
+    x.domain(layers.map(function(d) { return d[0].x; }));
     y.domain([0, d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
 
     svg.append("g")
@@ -247,8 +252,9 @@ function drawBar(portfolio) {
     var bars = portfolio.bar.bars;
 
 
-    x.domain(layers[0].map(function(d) { return d.x; }));
+    x.domain(layers.map(function(d) { return d[0].x; }));
     y.domain([0, d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
+
 
     var bars = svg.selectAll(".layer")
         .data(layers)
@@ -267,15 +273,15 @@ function drawBar(portfolio) {
     bars.enter()
       .append("g")
       .attr("class", "layer")
-      .style("fill", function(d, i) { return color(layers.columns[i]); })
+      .on('mouseover', tipBar.show)
+      .on('mouseout', tipBar.hide)
     .selectAll("rect")
       .data(function(d) { return d; })
       .enter()
       .append('rect')
+      .style("fill", function(d, i) { return color(layers.columns[i]); })
       .attr("y", height )
       .attr("height", 0)
-      //.on('mouseover', tipBar.show)
-      //.on('mouseout', tipBar.hide)
           
 
     // transition bars to proper height/pos
@@ -296,7 +302,6 @@ function drawBar(portfolio) {
       .selectAll("text")
         .attr("y", -2)
         .attr("x", 9)
-        .attr("dy", ".35em")
         .attr("transform", "rotate(90)")
         .style("text-anchor", "start");
 
