@@ -185,7 +185,7 @@ Portfolio.prototype.calcVals = function(rateOfReturn, fee, startingValue, contri
 
         // fees
         if (i % (12 / this.feeFreqPerYear) == 0) {
-            dat[i].fee = capitalSum * this.fee / this.feeFreqPerYear;
+            dat[i].fee = -capitalSum * this.fee / this.feeFreqPerYear;
         } else {
             dat[i].fee = 0
         }
@@ -199,14 +199,14 @@ Portfolio.prototype.calcVals = function(rateOfReturn, fee, startingValue, contri
             
         // inflation
         if (i % 12 == 0) {
-            dat[i].inflation = capitalSum * this.profile.inflation;
+            dat[i].inflation = -capitalSum * this.profile.inflation;
         } else {
             dat[i].inflation = 0;
         }
 
         // capital
         if (i % (12 / this.contributionFreqPerYear) == 0) {
-            capitalSum = capitalSum - dat[i].fee + dat[i].interest - dat[i].inflation + dat[i].contributions;
+            capitalSum = capitalSum + dat[i].fee + dat[i].interest + dat[i].inflation + dat[i].contributions;
         }
         dat[i].capital = capitalSum;
     }
@@ -215,9 +215,9 @@ Portfolio.prototype.calcVals = function(rateOfReturn, fee, startingValue, contri
 
     // calculate totals
     var totals = [];
-    totals.push({'name': 'fee','val': d3.sum(this.dat, function(d) { return d.fee; })});
+    totals.push({'name': 'fee','val': d3.sum(this.dat, function(d) { return -d.fee; })});
     totals.push({'name':'contributions','val': d3.sum(this.dat, function(d) { return d.contributions; })});
-    totals.push({'name':'inflation','val': d3.sum(this.dat, function(d) { return d.inflation; })});
+    totals.push({'name':'inflation','val': d3.sum(this.dat, function(d) { return -d.inflation; })});
     totals.push({'name':'interest','val': d3.sum(this.dat, function(d) { return d.interest; })});
     this.totals = totals;
 }

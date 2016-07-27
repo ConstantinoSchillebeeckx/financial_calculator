@@ -191,7 +191,11 @@ function updatePlots(id) {
 // Given an integer, will return it
 // formatted as USD ($xx,xxx.xx)
 function formatCurrency(d) {
-    return '$' + Math.abs(d).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    if (d >= 0) {
+        return '$' + Math.abs(d).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    } else {
+        return '-$' + Math.abs(d).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    }
 }
 
 
@@ -207,6 +211,28 @@ function arcTween(a) {
 }
 
 
+// https://github.com/d3/d3/issues/2265
+var buildOut = function(dataSeriesCount) {
+    var currentXOffsets = [];
+    var current_xIndex = 0;
+    return function(d, y0, y){
+        if(current_xIndex++ % dataSeriesCount === 0){
+            currentXOffsets = [0, 0];
+        }
+        if(y >= 0) {
+            d.y0 = currentXOffsets[1];
+            d.y = y;
+            currentXOffsets[1] += y;
+        } else {
+            d.y0 = currentXOffsets[0] + y;
+            d.y = -y;
+            currentXOffsets[0] += y;
+        }
+    }
+}
+
+
+
 function calcBar(data) {
 
 
@@ -218,7 +244,7 @@ function calcBar(data) {
 
     dat['columns'] = data.columns;
 
-    var layers = d3.layout.stack()(dat.columns.filter(function(l) {
+    var layers = d3.layout.stack().out(buildOut(plotCols.length))(dat.columns.filter(function(l) {
             if (plotCols.indexOf(l) > -1) {
                 return true;
             }

@@ -211,9 +211,6 @@ function stackedBar(portfolio, div) {
         .text(function(d) { return d; });
 
 
-    x.domain(layers.map(function(d) { return d[0].x; }));
-    y.domain([0, d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
-
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
@@ -249,8 +246,13 @@ function drawBar(portfolio) {
 
 
     x.domain(layers.map(function(d) { return d[0].x; }));
-    y.domain([0, d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })]).nice();
+    y.domain([
+        d3.min(layers[layers.length - 1], function(d) { return d.y0; }),
+        d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })
+    ]).nice();
 
+    console.log(layers)
+    console.log(y.domain())
 
     var bars = svg.selectAll(".layer")
         .data(layers)
