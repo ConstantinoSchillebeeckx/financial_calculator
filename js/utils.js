@@ -134,7 +134,7 @@ Parameters:
 
 */
 function removePortfolio(a) {
-    $(a).parentsUntil('.col-sm-12').remove();
+    jQuery(a).parentsUntil('.col-sm-12').remove();
 }
 
 
