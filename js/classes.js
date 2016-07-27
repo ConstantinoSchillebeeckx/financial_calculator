@@ -64,7 +64,7 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
 
         select.append("option")
             .attr("value",1)
-            .text("once a year")
+            .text("yearly")
 
         select.append("option")
             .attr("value",3)
