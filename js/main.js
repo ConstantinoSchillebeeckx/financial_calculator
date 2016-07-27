@@ -2,6 +2,8 @@
 
 var duration = 1500;
 var color = d3.scale.category10();
+var plotCols = ["contributions", "fee", "inflation", "interest"]; // categories to show on the plot
+var color = d3.scale.ordinal().domain(plotCols).range(["#2ecc71", "#e74c3c", "#9b59b6", "#3498db", "#34495e", "#2ecc71"]); 
 var defaultCurrentAge = 25;
 var defaultRetirementAge = 65;
 var defaultInflation = 2; // (%) 
@@ -38,20 +40,28 @@ function init(div) {
     var header = tmp.append("div")
         .attr("class","container-fluid")
         .attr("id","container")
-      .append("div")
+      .append('div')
+        .attr('class','row')
+      .append('div')
+        .attr('class','col-sm-12')
+        .html('<p class="lead">The charts below will detail how much you will earn/lose per year in interest, fees, inflation and contributions.  To add a new portfolio, enter a name and then click <i class="fa fa-plus fa-lg"></i> button.</p>')
+    
+      
+    header.append("div")
         .attr("class","row")
 
     var col1 = header.append('div')
         .attr('class','col-sm-3')
+
     
     currentAgeSlider = new Slider(); 
-    currentAgeSlider.add(col1, 'Current age', null, 20, 100, 1, defaultCurrentAge);
+    currentAgeSlider.add(col1, 'Current age', null, 18, 80, 1, defaultCurrentAge);
 
     var col2 = header.append('div')
         .attr('class','col-sm-3')
     
     retirementAgeSlider = new Slider(); 
-    retirementAgeSlider.add(col2, 'Retirement age', null, 40, 100, 1, defaultRetirementAge);
+    retirementAgeSlider.add(col2, 'Retirement age', null, 30, 100, 1, defaultRetirementAge);
 
     var col3 = header.append('div')
         .attr('class','col-sm-3')

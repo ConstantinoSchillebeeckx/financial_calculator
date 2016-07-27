@@ -17,6 +17,10 @@ text.arc {
   font-size: 10px;
 }
 
+.legend text {
+  font-size: 14px;
+}
+
 .axis line,
 .axis path {
   fill: none;
@@ -37,13 +41,11 @@ span.muted {
     font-weight: 300;
 }
 
-.sliderLabel {
-    margin-bottom: 20px;
+.rangeslider {
+    margin-bottom: 15px;
+    margin-top: 15px;
 }
 
-.bottomLabel {
-    margin-top: 20px;
-}
 
 .portfolioLabel {
     margin-bottom: 10px;

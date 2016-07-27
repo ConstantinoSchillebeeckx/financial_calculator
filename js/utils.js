@@ -67,7 +67,7 @@ function addPortfolio() {
             .attr("id","startingValue")
 
         startingValueSlider = new Slider(); 
-        startingValueSlider.add(col0, 'Starting capital', '$', 0, 50000, 1000, defaultStartingValue);
+        startingValueSlider.add(col0, 'Starting capital', '$', 0, 100000, 1000, defaultStartingValue);
         portfolio.gui.startingValueSlider = startingValueSlider;
 
         var col1 = guiRow1.append("div")
@@ -92,7 +92,7 @@ function addPortfolio() {
             .attr("id","startingValue")
 
         contributionSlider = new Slider(); 
-        contributionSlider.add(col3, 'Contributions', '$', 0, 5000, 100, defaultContributions, true, 'contribFreq');
+        contributionSlider.add(col3, 'Contributions', '$', 0, 24000, 100, defaultContributions, true, 'contribFreq');
         portfolio.gui.contributionSlider = contributionSlider
 
 
@@ -209,8 +209,6 @@ function arcTween(a) {
 
 function calcBar(data) {
 
-    // categories to show on the plot
-    var plotCols = ["contributions", "fee", "inflation", "interest"];
 
     // subsample to every year
     var dat = data.filter(function(value, index, Arr) {
