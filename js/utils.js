@@ -7,7 +7,7 @@ function addPortfolio() {
 
     if (name) {
 
-        var profile = new Profile(name, currentAgeSlider.get_val(), retirementAgeSlider.get_val(), inflationSlider.get_val());
+        var profile = new Profile(name, ageSlider.get_val()[0], ageSlider.get_val()[1], inflationSlider.get_val());
         var portfolio = new Portfolio(name, profile, defaultRateOfReturn, defaultFee, defaultStartingValue, defaultContributions, defaultContribFreqPerYear, defaultCompoundFreqPerYear, defaultFeeFreqPerYear);
         var id = portfolio.id;
 
@@ -148,7 +148,7 @@ function updatePlots(id) {
     } else { // if updating all portfolios (e.g. age sliders)
         portfolios.forEach(function(id, port) {
             toUpdate.push(id);
-            port.updateProfile(currentAgeSlider.get_val(), retirementAgeSlider.get_val(), inflationSlider.get_val())
+            port.updateProfile(ageSlider.get_val()[0], ageSlider.get_val()[1], inflationSlider.get_val())
         })
     }
 

@@ -10,9 +10,15 @@ function Slider () {
 
 }
 
+/*
 
+- freq : (bool) if true this slider will get a compounding dropdown with 'yearly', 'quarterly' or 'monthly'
+- freqID : str - label for frequency dropdown
+
+*/
 Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1, start=25, freq=false, freqID='') {
 
+    var id = this.id;
 
     function formatText(val, symbol) {
         if (symbol == '%') {
@@ -20,31 +26,52 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
         } else if (symbol == '$') {
             return ' [' + formatCurrency(val) + ']';
         } else {
-            return ' [' + val + ']';
+            if (Array.isArray(val)) {
+                return ' [' + val.map(function(d) { return parseInt(d); }) + ']';
+            } else {
+                return ' [' + val + ']';
+            }
         }
     }
 
+    // generate HTML for slider
     var container = sel.append("div")
         .attr("id","slider-" + this.id);
 
     var label = container.append("label")
         .attr("class","sliderLabel")
-        .html(labelText);
+        .html(labelText)
+      .append('span')
+        .attr('class','muted')
+        .text(formatText(start, symbol));
         
+    container.append('div')
+        .attr("id","slide-" + this.id);
 
-    var slide = container.append("input")
-        .attr("type","range")
-        .attr("min",min)
-        .attr("max",max)
-        .attr("step",step)
-        .attr("value",start)
-        .attr("data-orientation","horizontal")
+    var slider = document.getElementById('slide-' + this.id);
+    var connect = Array.isArray(start) ? true : 'lower';
+    noUiSlider.create(slider, {
+        start: start,
+        connect: connect,
+        margin: 1,
+        step: step,
+        range: {
+            'min': min,
+            'max': max,
+        }
+    });
 
+
+
+
+    // get the portfolio ID associated with sliders
     var tmp = jQuery('#slider-' + this.id).closest('.panel').attr('id');
     if (tmp) {
-        var portID = tmp.split('-')[1];
+        this.portfolio = tmp.split('-')[1]; // port ID
     }
 
+
+    // add any neccessary dropdows
     if (freq) {
         container.append("label")
             .attr('class','bottomLabel')
@@ -57,10 +84,9 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
             })
 
 
-
         var select = container.append("select")
             .attr("id",freqID)
-            .attr('onchange','updatePlots(' + portID + ')'); 
+            .attr('onchange','updatePlots(' + this.portfolio + ')'); 
 
         select.append("option")
             .attr("value",1)
@@ -83,31 +109,31 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
     }
 
 
-    var obj = jQuery('#slider-' + this.id).find('input[type="range"]').rangeslider({
-        polyfill : false,
-        onInit : function() {
-            this.portfolio = portID;
-            this.output = label.append('span')
-                .attr("class","muted")
-                .text(formatText(this.$element.val(), symbol));
-
-        },
-        onSlide : function( position, value ) {
-            this.output.text(formatText(value, symbol));
-        },
-        onSlideEnd: function(position, value) {
-            updatePlots(this.portfolio); 
-        }
+    // add event for slider end and slider move
+    slider.noUiSlider.on('end', function() {
+        updatePlots(this.portfolio);
+    })
+    slider.noUiSlider.on('slide', function(d) {
+        jQuery('#slider-' + id).find('span').text(formatText(d, symbol));
     });
 
+
+    // update slider obj
     this.name = labelText;
     this.symbol = symbol;
-    this.obj = obj;
+    this.obj = slider.noUiSlider;
 
 };
 
+// get slider value, will return an array of ints if a double handle slider
 Slider.prototype.get_val = function() {
-    return parseFloat(this.obj.val());
+    var val = this.obj.get();
+
+    if (Array.isArray(val)) { // if age range
+        return val.map(function(d) { return parseFloat(d); });
+    } else {
+        return parseFloat(val);
+    }
 }
 
 
@@ -249,7 +275,7 @@ Portfolio.prototype.updateProfile = function(age, retirementAge, inflation) {
 function Profile (name, age=32, retirementAge=65, inflation=2) {
 
     this.name = name;
-    this.age = age + 1; // +1 because we don't compound this year
+    this.age = age ; // +1 because we don't compound this year
     this.retirementAge = retirementAge;
     this.inflation = inflation / 100.0;
 

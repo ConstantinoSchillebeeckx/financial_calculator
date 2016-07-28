@@ -54,14 +54,8 @@ function init(div) {
         .attr('class','col-sm-3')
 
     
-    currentAgeSlider = new Slider(); 
-    currentAgeSlider.add(col1, 'Current age', null, 18, 80, 1, defaultCurrentAge);
-
-    var col2 = header.append('div')
-        .attr('class','col-sm-3')
-    
-    retirementAgeSlider = new Slider(); 
-    retirementAgeSlider.add(col2, 'Retirement age', null, 30, 100, 1, defaultRetirementAge);
+    ageSlider = new Slider(); 
+    ageSlider.add(col1, 'Age range', null, 18, 80, 1, [defaultCurrentAge, defaultRetirementAge]);
 
     var col3 = header.append('div')
         .attr('class','col-sm-3')
