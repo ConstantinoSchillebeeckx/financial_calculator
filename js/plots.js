@@ -36,7 +36,7 @@ function plotPie(portfolio, div) {
                 {'name':'interest', 'val':0}];
     var dat = pie(tmp);
 
-    var margin = {top: 10, right: 10, bottom: 10, left: 10};
+    var margin = {top: 10, right: 0, bottom: 10, left: 10};
     var width = d3.select(div).node().clientWidth - margin.left - margin.right;
         height = width * 0.8 - margin.top - margin.bottom,
         radius = Math.min(width, height) / 2;
@@ -88,8 +88,6 @@ function plotPie(portfolio, div) {
 function drawPie(portfolio) {
 
     var dat = pie(portfolio.totals);
-
-
     var slices = portfolio.pie.slices;
     var labels = portfolio.pie.labels;
 
@@ -120,7 +118,7 @@ function drawPie(portfolio) {
 
 /* -------------------------------------------
 
-                BAR CHART
+            STACKED BAR CHART
 
 ----------------------------------------------*/
 
@@ -227,15 +225,16 @@ function stackedBar(portfolio, div) {
       .attr("transform", "translate(0,0)")
 
 
-    drawBar(portfolio);
+    drawStackedBar(portfolio);
+
+    fitViewBox('#barSVG');
 
     return portfolio;
 
 }
 
 // transition bar elements
-function drawBar(portfolio) {
-
+function drawStackedBar(portfolio) {
 
     var layers = calcBar(portfolio.dat);
     var x = portfolio.bar.x;
@@ -257,7 +256,7 @@ function drawBar(portfolio) {
 
 
     // exit bars
-    bars.exit(function(d) { console.log(d) })
+    bars.exit()
         .transition()
         .duration(duration)
         .attr("y", height )
@@ -298,3 +297,115 @@ function drawBar(portfolio) {
     svg.select('#y').transition().duration(duration).call(yAxis);
 
 }
+
+
+
+
+
+
+
+
+
+
+/* -------------------------------------------
+
+                BAR CHART
+
+----------------------------------------------*/
+function barChart(portfolio, div) {
+
+    var margin = {top: 10, right: 0, bottom: 10, left: 80};
+    var data = portfolio.totals;
+
+    width = d3.select(div).node().clientWidth - margin.left - margin.right;
+    height = d3.select('#barPlot1').node().clientHeight - margin.top - margin.bottom 
+
+    var x = d3.scale.ordinal()
+        .rangeRoundBands([0, width], .1);
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(5)
+        .tickFormat(function(d) { return formatCurrency(d); });
+
+
+    var svg = d3.select(div)
+        .append("svg") // viewBox set later
+        .attr('id','simpleBar')
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    portfolio.simpleBar = {};
+    portfolio.simpleBar.svg = svg;
+    portfolio.simpleBar.height = height;
+    portfolio.simpleBar.axis = {};
+    portfolio.simpleBar.y = y
+    portfolio.simpleBar.axis.y = yAxis;
+
+    x.domain(data.map(function(d) { return d.name; }));
+    y.domain([0, d3.max(data, function(d) { return d.val; })]);
+
+      svg.append("g")
+          .attr("class", "y axis")
+          .attr('id','y2')
+          .call(yAxis)
+
+      svg.selectAll(".bar")
+          .data(data)
+        .enter().append("rect")
+          .attr("class", "bar")
+          .attr("x", function(d) { return x(d.name); })
+          .attr("width", x.rangeBand())
+          .attr("y", height)
+          .attr('fill', function(d) { return color(d.name); })  
+          .attr('height', 0);
+
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+
+    updateSimpleBar(portfolio);
+
+    fitViewBox('#simpleBar');
+    return portfolio;
+}
+
+
+function updateSimpleBar(portfolio) {
+
+    var data = portfolio.totals;
+    var y = portfolio.simpleBar.y;
+    var svg = portfolio.simpleBar.svg;
+    var yAxis = portfolio.simpleBar.axis.y;
+
+    y.domain([0, d3.max(data, function(d) { return d.val; })]).nice();
+
+    var tmp = data[3].val
+    console.log(tmp)
+    console.log(y(tmp))
+    console.log(portfolio.simpleBar.height - y(tmp))
+
+    // there are no entering or exiting bars
+    // only need to adjust height
+    svg.selectAll('rect')
+        .data(data)
+        .transition()
+        .duration(duration)
+        .attr("y", function(d) { return y(d.val); })
+        .attr("height", function(d) { return portfolio.simpleBar.height - y(d.val); })
+
+    svg.select('#y2').transition().duration(duration).call(yAxis);
+        
+
+}
+
+

@@ -104,17 +104,16 @@ function addPortfolio() {
             .attr("class","row portfolioPlots")
 
         var col1 = guiRow2.append("div")
-            .attr("class","col-sm-7")
+            .attr("class","col-sm-8")
             .attr("id","barPlot" + portfolio.id)
 
         var col2 = guiRow2.append("div")
             .attr("class","col-sm-4")
-            .attr("id","piePlot" + portfolio.id)
+            .attr("id","simpleBarPlot" + portfolio.id)
 
         // receive updated portfolio info for use in updating plots
         portfolio = stackedBar(portfolio, '#barPlot' + portfolio.id)
-        fitViewBox('#barSVG');
-        //portfolio = plotPie(portfolio, '#piePlot' + portfolio.id)
+        portfolio = barChart(portfolio, '#simpleBarPlot' + portfolio.id)
 
 
         var net = formatCurrency(portfolio.netValue());
@@ -178,10 +177,10 @@ function updatePlots(id) {
         jQuery("#portfolio-" + id + " #duration").html(port.profile.yearsToInvest);
 
         // transition bar chart
-        drawBar(port);
+        drawStackedBar(port);
 
         // transition pie
-        drawPie(port);
+        updateSimpleBar(port);
 
         // update portfolio with new numbers
         portfolios.set(id, port);
@@ -295,9 +294,12 @@ function fitViewBox(sel) {
 
     var x1, y1;
 
+    var plotRow = d3.select('.portfolioPlots').node().getBoundingClientRect();
+
+
     var g = d3.select(sel + ' g').node().getBBox();
-    x1 = g.width + margin.right + margin.left;
-    y1 = g.height + margin.top + margin.bottom;
+    x1 = g.width// + margin.left;
+    y1 = g.height + margin.bottom;
 
     d3.select(sel).attr("viewBox", 0 + " " + 0 + " " + x1 + " " + y1);
 
