@@ -135,6 +135,10 @@ Parameters:
 */
 function removePortfolio(a) {
     jQuery(a).parentsUntil('.col-sm-12').remove();
+
+    // need to remove portfolio class TODO
+    // need to set the portfolio counter TODO
+
 }
 
 

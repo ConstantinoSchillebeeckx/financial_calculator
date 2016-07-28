@@ -188,6 +188,11 @@ function stackedBar(portfolio, div) {
     portfolio.bar.axis.y = yAxis;
     portfolio.bar.axis.y2 = yAxis2;
 
+    y.domain([
+        d3.min(layers[layers.length - 1], function(d) { return d.y0; }),
+        d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })
+    ]).nice();
+
     svg.selectAll(".layer")
       .data(layers)
     .enter().append("g")
@@ -197,7 +202,7 @@ function stackedBar(portfolio, div) {
       .enter()
       .append('rect')
       .style("fill", function(d, i) { return color(layers.columns[i]); })
-      .attr("y", height )
+      .attr("y", y(0) )
       .attr("height", 0)
 
 
@@ -224,7 +229,8 @@ function stackedBar(portfolio, div) {
 
     svg.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
+        .attr('transform','translate(0,' + y(0) + ')')
+        .attr("opacity", 1e-6)
         .call(xAxis)
 
     svg.append("g")
@@ -301,16 +307,12 @@ function drawBar(portfolio) {
         .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
         .attr("width", x.rangeBand() - 1);
 
-
     svg.select('.x.axis')
         .transition()
         .duration(duration)
-        .call(xAxis)
-      .selectAll("text")
-        .attr("y", -2)
-        .attr("x", 9)
-        .attr("transform", "rotate(90)")
-        .style("text-anchor", "start");
+        .attr('opacity',1)
+        .attr('width',0)
+        .attr('transform','translate(0,' + y(0) + ')');
 
     svg.select('#y').transition().duration(duration).call(yAxis);
     svg.select('#y2').transition().duration(duration).call(yAxis2);
