@@ -113,7 +113,8 @@ function addPortfolio() {
 
         // receive updated portfolio info for use in updating plots
         portfolio = stackedBar(portfolio, '#barPlot' + portfolio.id)
-        portfolio = plotPie(portfolio, '#piePlot' + portfolio.id)
+        fitViewBox('#barSVG');
+        //portfolio = plotPie(portfolio, '#piePlot' + portfolio.id)
 
 
         var net = formatCurrency(portfolio.netValue());
@@ -280,5 +281,39 @@ function calcBar(data) {
     return convert;
 
 }
+
+
+/* Set viewbox of svg
+
+Parameters:
+===========
+- sel : str
+        selection string for svg to fiew viewbox for
+
+*/
+function fitViewBox(sel) {
+
+    var x1, y1;
+
+    var g = d3.select(sel + ' g').node().getBBox();
+    x1 = g.width + margin.right + margin.left;
+    y1 = g.height + margin.top + margin.bottom;
+
+    d3.select(sel).attr("viewBox", 0 + " " + 0 + " " + x1 + " " + y1);
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
