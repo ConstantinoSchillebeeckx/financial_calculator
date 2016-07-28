@@ -95,6 +95,12 @@ function addPortfolio() {
         contributionSlider.add(col3, 'Contributions', '$', 0, 24000, 100, defaultContributions, true, 'contribFreq');
         portfolio.gui.contributionSlider = contributionSlider
 
+        var col4 = guiRow1.append("div")
+            .attr("class","col-sm-6")
+            .attr("id","startingValue")
+        swrSlider = new Slider();
+        swrSlider.add(col3, 'SWR', '%', 0, 10, .1, defaultSWR, false, '');
+        portfolio.gui.swrSlider = swrSlider
 
 
         // accordion gui ----------------------------------
@@ -120,6 +126,12 @@ function addPortfolio() {
         gui.append("p")
             .attr("class","lead")
             .html("Total portfolio value after <span id='duration'>" + portfolio.profile.yearsToInvest + "</span> years is <span id='netVal' class='label label-success'>" + net + "</span>");
+        portfolios.set(id, portfolio);
+
+        var swrValue = formatCurrency(portfolio.netValue() * (swrSlider.get_val()/100));
+        gui.append("p")
+            .attr("class","lead")
+            .html("Your Safe Withdrawl Rate return after <span id='duration'>" + portfolio.profile.yearsToInvest + "</span> years is <span id='swr' class='label label-success'>" + swrValue + "</span>");
         portfolios.set(id, portfolio);
     }
 
@@ -170,6 +182,7 @@ function updatePlots(id) {
                       )
 
         jQuery("#portfolio-" + id + " #netVal").html(formatCurrency(port.netValue()));
+        jQuery("#portfolio-" + id + " #swr").html(formatCurrency(port.netValue() * (port.gui.swrSlider.get_val()/100)));
         jQuery("#portfolio-" + id + " #duration").html(port.profile.yearsToInvest);
 
         // transition bar chart

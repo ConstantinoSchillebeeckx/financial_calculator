@@ -11,6 +11,7 @@ var defaultRateOfReturn = 6.0; // (%)
 var defaultFee = 1.2; // (%) 
 var defaultStartingValue = 20000; // ($)
 var defaultContributions = 500; // frequence set by var contributionFreqPerYear
+var defaultSWR = 4 // (%)
 var defaultContribFreqPerYear = 12; // 12 -> monthly, 1 -> yearly, 3 -> quarterly
 var defaultCompoundFreqPerYear = 1; // 12 -> monthly, 1 -> yearly, 3 -> quarterly
 var defaultFeeFreqPerYear = 1; // 12 -> monthly, 1 -> yearly, 3 -> quarterly
