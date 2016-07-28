@@ -162,8 +162,13 @@ function stackedBar(portfolio, div) {
     var y = d3.scale.linear()
         .rangeRound([height, 0]);
 
+    var y2 = d3.scale.linear()
+        .rangeRound([height, 0]);
+
+    // save elements so that we can update them later
     portfolio.bar.x = x;
     portfolio.bar.y = y;
+    portfolio.bar.y2 = y2;
 
     var xAxis = d3.svg.axis()
         .scale(x)
@@ -174,8 +179,14 @@ function stackedBar(portfolio, div) {
         .orient("left")
         .tickFormat(function(d) { return formatCurrency(d); });
 
+    var yAxis2 = d3.svg.axis()
+        .scale(y2)
+        .orient("right")
+        .tickFormat(function(d) { return formatCurrency(d); });
+
     portfolio.bar.axis.x = xAxis;
     portfolio.bar.axis.y = yAxis;
+    portfolio.bar.axis.y2 = yAxis2;
 
     svg.selectAll(".layer")
       .data(layers)
@@ -215,16 +226,16 @@ function stackedBar(portfolio, div) {
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis)
-      .selectAll("text")
-        .attr("y", -2)
-        .attr("x", 9)
-        .attr("dy", ".35em")
-        .attr("transform", "rotate(90)")
-        .style("text-anchor", "start");
 
     svg.append("g")
       .attr("class", "y axis")
+      .attr('id','y')
       .attr("transform", "translate(0,0)")
+
+    svg.append("g")
+      .attr("class", "y axis")
+      .attr('id','y2')
+      .attr("transform", "translate(" + width + ",0)")
 
     drawBar(portfolio);
 
@@ -239,8 +250,10 @@ function drawBar(portfolio) {
     var layers = calcBar(portfolio.dat);
     var x = portfolio.bar.x;
     var y = portfolio.bar.y;
+    var y2 = portfolio.bar.y2;
     var xAxis = portfolio.bar.axis.x;
     var yAxis = portfolio.bar.axis.y;
+    var yAxis2 = portfolio.bar.axis.y2;
     var svg = portfolio.bar.svg;
     var bars = portfolio.bar.bars;
 
@@ -250,9 +263,7 @@ function drawBar(portfolio) {
         d3.min(layers[layers.length - 1], function(d) { return d.y0; }),
         d3.max(layers[layers.length - 1], function(d) { return d.y0 + d.y; })
     ]).nice();
-
-    console.log(layers)
-    console.log(y.domain())
+    y2.domain([0,d3.max(portfolio.dat, function(d) { return d.capital; })]).nice();
 
     var bars = svg.selectAll(".layer")
         .data(layers)
@@ -301,6 +312,7 @@ function drawBar(portfolio) {
         .attr("transform", "rotate(90)")
         .style("text-anchor", "start");
 
-    svg.select('.y.axis').transition().duration(duration).call(yAxis);
+    svg.select('#y').transition().duration(duration).call(yAxis);
+    svg.select('#y2').transition().duration(duration).call(yAxis2);
 
 }
