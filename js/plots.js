@@ -108,7 +108,7 @@ function stackedBar(portfolio, div) {
       .data(layers.columns)
       .enter().append("g")
         .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(20," + i * 20 + ")"; })
+        .attr("transform", function(d, i) { return "translate(20,20)"; })
         .style("font", "10px sans-serif");
 
     legend.append("rect")
@@ -122,6 +122,7 @@ function stackedBar(portfolio, div) {
         .attr("y", 9)
         .attr("dy", ".35em")
         .attr("text-anchor", "start")
+        .attr('opacity',1e-6)
         .text(function(d) { return d; });
 
 
@@ -230,6 +231,29 @@ function drawStackedBar(portfolio) {
         .attr('transform','translate(0,' + y(0) + ')');
 
     svg.select('#y').transition().duration(duration).call(yAxis);
+
+    console.log(layers.columns)
+
+    // update legend
+    var legend = svg.selectAll(".legend")
+      .data(layers.columns)
+
+    legend.transition()
+        .duration(duration)
+        .attr("transform", function(d, i) { console.log(i); return "translate(20," + (i * 20) + ")"; })
+        .attr('opacity',1)
+      
+    legend.select('text')
+        .transition()
+        .duration(duration)
+        .attr('opacity',1)
+        .text(function(d) { return d; })
+
+    legend.exit()
+        .transition()
+        .duration(duration)
+        .attr('opacity',1e-6)
+
 
 }
 
