@@ -240,8 +240,18 @@ var buildOut = function(dataSeriesCount) {
 
 
 
-function calcBar(data) {
+function calcBar(portfolio) {
 
+    var data = portfolio.dat;
+
+    // get toggle state; true = gain/loss || false = total value
+    var toggle = jQuery('#toggle-' + portfolio.id).prop('checked');
+
+    if (toggle) {
+        plotCols = ["contributions", "fee", "inflation", "interest"]; // categories to show on the plot
+    } else {
+        plotCols = ['capital'];
+    }
 
     // subsample to every year
     var dat = data.filter(function(value, index, Arr) {

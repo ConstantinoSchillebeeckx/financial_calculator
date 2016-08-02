@@ -106,7 +106,23 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
                 .attr("value",12)
                 .text("monthly")
         }
+    } else if (labelText == 'Starting capital') {
+        container.append('input')
+            .attr('type','checkbox')
+            .attr('checked',true)
+            .attr('data-toggle','toggle')
+            .attr('id','toggle-' + this.portfolio)
+            .attr('data-on','Gain/loss')
+            .attr('data-off','Total value')
+            .attr('data-onstyle','info')
+            .attr('data-offstyle','default')
+            .attr('data-size','small')
+            .attr('onchange','updatePlots(' + this.portfolio + ')'); 
+
+        jQuery('#toggle-' + this.portfolio).bootstrapToggle(); // create toggle
     }
+
+
 
 
     // add event for slider end and slider move
@@ -172,8 +188,7 @@ function Portfolio (name="default", profile = new Profile("default"), rateOfRetu
 
 // return net value of portfolio
 Portfolio.prototype.netValue = function() {
-
-    return this.dat[this.profile.monthsToInvest - 1].capital;
+    return this.dat[this.profile.monthsToInvest].capital;
 }
 
 
@@ -197,7 +212,7 @@ Portfolio.prototype.calcVals = function(rateOfReturn, fee, startingValue, contri
     var yearSum = this.startYear + 1;
     var capitalSum = this.startingValue;
     var dat = [];
-    for (var i = 0; i < this.profile.monthsToInvest; i ++) {
+    for (var i = 0; i <= this.profile.monthsToInvest; i ++) {
 
         dat.push({'month': this.startMonth + i});
 
@@ -264,7 +279,7 @@ Portfolio.prototype.updateProfile = function(age, retirementAge, inflation) {
     profile.inflation = inflation / 100;
 
     // re-calculate profile values
-    profile.yearsToInvest = retirementAge - age;
+    profile.yearsToInvest = retirementAge - age - 1;
     profile.monthsToInvest = profile.yearsToInvest * 12;
 
     portfolios.set(id, this);
@@ -279,7 +294,7 @@ function Profile (name, age=32, retirementAge=65, inflation=2) {
     this.retirementAge = retirementAge;
     this.inflation = inflation / 100.0;
 
-    this.yearsToInvest = this.retirementAge - this.age;
+    this.yearsToInvest = this.retirementAge - this.age - 1;
     this.monthsToInvest = this.yearsToInvest * 12;
 }
 
