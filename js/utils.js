@@ -18,6 +18,7 @@ function addPortfolio() {
             .attr("class","row")
           .append("div")
             .attr("class","col-sm-12")
+            .attr('id','panel-' + id);
 
         // accordion ----------------------------------
         var collapse = portfolioRow.append('div')
@@ -41,7 +42,7 @@ function addPortfolio() {
             .html("<i class='fa fa-chevron-down'></i> " + name)
          .append("a")
             .attr("href","#")
-            .attr("onclick","removePortfolio(this); return false; ")
+            .attr("onclick","removePortfolio(" + id + "); return false; ")
             .attr('class', 'pull-right muted')
             .style('padding','1px 7px')
             .append('i')
@@ -130,14 +131,16 @@ function addPortfolio() {
 
 Parameters:
 ===========
-- a : this of the a href that was clicked
+- id : int
+       id of portfolio to be removed
 
 */
-function removePortfolio(a) {
-    jQuery(a).parentsUntil('.col-sm-12').remove();
+function removePortfolio(id) {
 
-    // need to remove portfolio class TODO
-    // need to set the portfolio counter TODO
+    jQuery('#panel-' + id).remove();
+    
+    portfolios.remove(id);
+    num_portfolio -= 1;
 
 }
 
