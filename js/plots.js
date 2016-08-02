@@ -11,10 +11,18 @@ var tipBar = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
-    var html = '<span style="color:red">' + d[0].x + '</span><hr>' // year
+    var html = '<span>Year - ' + d[0].x + '</span><hr>' // year
+    var sum = 0;
     d.map(function(e) {
-        html += '<p>' + e.name + ': ' + formatCurrency(e.y0 + e.y) + '</p><br>';
+        if (e.y0 < 0) {
+            var val = e.y0;
+        } else {
+            var val = e.y0 + e.y;
+        }
+        sum += val;
+        html += '<p><span style="color:' + color(e.name) + '">' + e.name + ':</span> ' + formatCurrency(val) + '</p><br>';
     });
+    html += '<p>Year earnings: ' + formatCurrency(sum) + '</p>';
     return html;
   })
 
@@ -40,7 +48,7 @@ function stackedBar(portfolio, div) {
         .attr('transform','translate(' + (width / 2) + ',0)')
         .attr('dy','-10')
 
-    //svg.call(tipBar);
+    svg.call(tipBar);
 
     portfolio.bar.svg = svg;
 
@@ -168,6 +176,18 @@ function drawStackedBar(portfolio) {
       .attr("y", height )
       .attr("height", 0)
           
+    svg.selectAll('.layer')
+        .on('mouseover', function(d, idx) {
+            var bar = this.getBoundingClientRect();
+            var tipBox = d3.select('.d3-tip').node().getBoundingClientRect();
+            // 179 is tooltip once it has been filled in with text
+            // for now I'm manually specifying height because the 
+            // tooltip doesn't fill until the first mouseover
+            // need to fill manually first to get dynamic height
+            var absPos = [(bar.top - 179), bar.left];
+            return tipBar.show(d, idx, absPos); 
+        })
+        .on('mouseout', tipBar.hide)
 
     // transition bars to proper height/pos
     bars.selectAll("rect")
