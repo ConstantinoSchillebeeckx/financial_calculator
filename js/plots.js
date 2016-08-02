@@ -2,122 +2,6 @@
 
 /* -------------------------------------------
 
-                PIE PLOT
-
-----------------------------------------------*/
-
-/*
-TODO
-
-Parameters:
-===========
-- dat : d3.csv parse style data
-         expects this to be an array of obj
-         with keys 'val' and 'name'
-
-*/
-var pie = d3.layout.pie()
-    .sort(null)
-    .value(function(d) { return Math.abs(d.val); });
-
-var tipPie = d3.tip()
-  .attr('class', 'd3-tip')
-  .offset([-10, 0])
-  .html(function(d) {
-    return "<strong>Frequency:</strong> <span style='color:red'>" + d + "</span>";
-  })
-
-function plotPie(portfolio, div) {
-
-    // set initial data to 0 so that we can transition from zero
-    var tmp = [{'name':'fee', 'val':0},
-                {'name':'contributions', 'val':0},
-                {'name':'inflation', 'val':0},
-                {'name':'interest', 'val':0}];
-    var dat = pie(tmp);
-
-    var margin = {top: 10, right: 0, bottom: 10, left: 10};
-    var width = d3.select(div).node().clientWidth - margin.left - margin.right;
-        height = width * 0.8 - margin.top - margin.bottom,
-        radius = Math.min(width, height) / 2;
-
-    arc = d3.svg.arc()
-        .outerRadius(radius - 10)
-        .innerRadius(0);
-
-    var labelOffset = 60;
-    labelArc = d3.svg.arc()
-        .outerRadius(radius - labelOffset)
-        .innerRadius(radius - labelOffset);
-
-    var svg = d3.select(div).append("svg")
-        .attr("id","pieSVG")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-    //svg.call(tipPie);
-
-    portfolio.pie.svg = svg;
-
-    var pieSlices = svg.selectAll("path")
-        .data(dat)
-      .enter().append("path")
-        .style("fill", function(d) { return color(d.data.name); })
-        .attr("d",arc)
-        .each(function(d) { this._current = d; }) // store the initial angles
-
-    var pieLabels = svg.selectAll("text")
-        .data(dat)
-      .enter().append("text")
-        .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
-        .attr("dy", ".35em")
-        .attr("class","arc")
-        .html(function(d) { return d.value ? formatCurrency(d.data.val) : null; })
-
-    portfolio.pie.slices = pieSlices;
-    portfolio.pie.labels = pieLabels;
-
-    drawPie(portfolio);
-
-    return portfolio;
-}
-
-// function handles transitions
-function drawPie(portfolio) {
-
-    var dat = pie(portfolio.totals);
-    var slices = portfolio.pie.slices;
-    var labels = portfolio.pie.labels;
-
-    // transition pie
-    slices.data(dat)
-        .transition()
-        .duration(duration)
-        .attrTween("d", arcTween);
-
-    // transition pie labels
-    labels.data(dat)
-        .transition()
-        .duration(duration)
-        .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
-
-    // can't transition text
-    labels.data(dat)
-        .html(function(d) { return d.value ? formatCurrency(d.data.val) : null; });
-
-}
-
-
-
-
-
-
-
-
-/* -------------------------------------------
-
             STACKED BAR CHART
 
 ----------------------------------------------*/
@@ -135,7 +19,7 @@ var tipBar = d3.tip()
   })
 
 
-var margin = {top: 10, right: 0, bottom: 10, left: 70};
+var margin = {top: 25, right: 0, bottom: 10, left: 70};
 function stackedBar(portfolio, div) {
 
     var layers = calcBar(portfolio.dat);
@@ -147,6 +31,14 @@ function stackedBar(portfolio, div) {
         .append('svg') // viewbox is set after rendering chart
           .attr("id","barSVG")
         .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // plot title
+    svg.append('text')
+        .text('Yearly category earnings/losses')
+        .attr('class',"plotTitle")
+        .attr('text-anchor','middle')
+        .attr('transform','translate(' + (width / 2) + ',0)')
+        .attr('dy','-10')
 
     //svg.call(tipBar);
 
@@ -227,7 +119,7 @@ function stackedBar(portfolio, div) {
 
     drawStackedBar(portfolio);
 
-    fitViewBox('#barSVG');
+    fitViewBox('#barPlot' + portfolio.id);
 
     return portfolio;
 
@@ -314,11 +206,11 @@ function drawStackedBar(portfolio) {
 ----------------------------------------------*/
 function barChart(portfolio, div) {
 
-    var margin = {top: 10, right: 0, bottom: 10, left: 80};
+    var margin = {top: 25, right: 0, bottom: 10, left: 80};
     var data = portfolio.totals;
 
     width = d3.select(div).node().clientWidth - margin.left - margin.right;
-    height = d3.select('#barPlot1').node().clientHeight - margin.top - margin.bottom 
+    height = d3.select('#barPlot' + portfolio.id).node().clientHeight - margin.top - margin.bottom 
 
     var x = d3.scale.ordinal()
         .rangeRoundBands([0, width], .1);
@@ -353,6 +245,14 @@ function barChart(portfolio, div) {
     x.domain(data.map(function(d) { return d.name; }));
     y.domain([0, d3.max(data, function(d) { return d.val; })]);
 
+    // plot title
+    svg.append('text')
+        .text('Category totals')
+        .attr('class',"plotTitle")
+        .attr('text-anchor','middle')
+        .attr('transform','translate(' + (width / 2) + ',0)')
+        .attr('dy','-10')
+
       svg.append("g")
           .attr("class", "y axis")
           .attr('id','y2')
@@ -375,7 +275,7 @@ function barChart(portfolio, div) {
 
     updateSimpleBar(portfolio);
 
-    fitViewBox('#simpleBar');
+    fitViewBox('#simpleBarPlot' + portfolio.id);
     return portfolio;
 }
 
@@ -390,9 +290,6 @@ function updateSimpleBar(portfolio) {
     y.domain([0, d3.max(data, function(d) { return d.val; })]).nice();
 
     var tmp = data[3].val
-    console.log(tmp)
-    console.log(y(tmp))
-    console.log(portfolio.simpleBar.height - y(tmp))
 
     // there are no entering or exiting bars
     // only need to adjust height

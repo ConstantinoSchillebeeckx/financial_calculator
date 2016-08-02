@@ -287,7 +287,7 @@ function calcBar(data) {
 Parameters:
 ===========
 - sel : str
-        selection string for svg to fiew viewbox for
+        selection string for div of SVG e.g. #barPlot1
 
 */
 function fitViewBox(sel) {
@@ -297,11 +297,11 @@ function fitViewBox(sel) {
     var plotRow = d3.select('.portfolioPlots').node().getBoundingClientRect();
 
 
-    var g = d3.select(sel + ' g').node().getBBox();
+    var g = d3.select(sel + ' svg g').node().getBBox();
     x1 = g.width// + margin.left;
     y1 = g.height + margin.bottom;
 
-    d3.select(sel).attr("viewBox", 0 + " " + 0 + " " + x1 + " " + y1);
+    d3.select(sel + ' svg').attr("viewBox", 0 + " " + 0 + " " + x1 + " " + y1);
 
 
 }

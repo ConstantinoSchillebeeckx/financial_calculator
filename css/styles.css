@@ -18,7 +18,7 @@ text.arc {
 }
 
 .legend text {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .axis line,
@@ -85,6 +85,11 @@ select {
 }
 
 .portfolioPlots {
-    margin-top: 15px;
+    margin-top: 25px;
     margin-bottom: 15px;
+}
+
+.plotTitle {
+    font-size: 18px;
+    fill: gray;
 }
