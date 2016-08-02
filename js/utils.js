@@ -28,6 +28,7 @@ function addPortfolio() {
 
        var bar = collapse.append("div")
             .attr("class","panel-heading")
+            .attr("id", "panelHeading-" + id)
             .style("overflow","auto")
             .attr("role","tab")
           .append("h4")
@@ -35,8 +36,7 @@ function addPortfolio() {
           .append("a")
             .attr("role","button")
             .attr("data-toggle","collapse")
-            .attr("data-parent","#accordion")
-            .attr("href","#collapseGUI")
+            .attr("href","#collapseGUI-" + id)
             .attr("aria-expanded","true")
             .attr("aria-controls","collapseGUI")
             .html("<i class='fa fa-chevron-down'></i> " + name)
@@ -52,7 +52,7 @@ function addPortfolio() {
 
         // accordion gui ----------------------------------
         var gui = collapse.append("div")
-            .attr("id","collapseGUI")
+            .attr("id","collapseGUI-" + id)
             .attr("class","panel-collapse collapse in")
             .attr("role","tabpanel")
             .attr("aria-labelledby","headingOne")

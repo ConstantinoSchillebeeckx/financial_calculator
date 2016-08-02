@@ -197,10 +197,14 @@ function drawStackedBar(portfolio) {
           
     svg.selectAll('.layer')
         .on('mouseover', function(d, idx) {
+
+            d3.select(this).classed('hover', true); // add class
+
             // get toggle state; true = gain/loss || false = total value
             var toggle = jQuery('#toggle-' + portfolio.id).prop('checked');
 
             var bar = this.getBoundingClientRect();
+            var bodyBox = d3.select('body').node().getBoundingClientRect();
             var tipBox = d3.select('.d3-tip').node().getBoundingClientRect();
             // 179 is tooltip once it has been filled in with text
             // for now I'm manually specifying height because the 
@@ -208,10 +212,13 @@ function drawStackedBar(portfolio) {
             // need to fill manually first to get dynamic height
             var offset = 0
             toggle ? offset = 190 : offset = 104;
-            var absPos = [(bar.top - offset), bar.left];
+            var absPos = [(bar.top - offset - bodyBox.top), bar.left];
             return tipBar.show(d, idx, absPos); 
         })
-        .on('mouseout', tipBar.hide)
+        .on('mouseout', function(d, idx) {
+            tipBar.hide(d, idx);
+            d3.select(this).classed('hover', false); // remove class
+        })
 
     // transition bars to proper height/pos
     bars.selectAll("rect")

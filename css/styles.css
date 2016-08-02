@@ -93,3 +93,7 @@ select {
     font-size: 18px;
     fill: gray;
 }
+
+.hover * {
+    fill: yellowGreen !important;
+}
