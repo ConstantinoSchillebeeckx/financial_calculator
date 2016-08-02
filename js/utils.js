@@ -85,7 +85,7 @@ function addPortfolio() {
             .attr("id","startingValue")
 
         feeSlider = new Slider(); 
-        feeSlider.add(col2, 'Overall fee', '%', 0, 15, 0.1, defaultFee, true, 'feeFreq');
+        feeSlider.add(col2, 'Fees', '%', 0, 15, 0.1, defaultFee, true, 'feeFreq');
         portfolio.gui.feeSlider = feeSlider
 
         var col3 = guiRow1.append("div")

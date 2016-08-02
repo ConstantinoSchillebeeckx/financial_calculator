@@ -38,6 +38,7 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
     var container = sel.append("div")
         .attr("id","slider-" + this.id);
 
+
     var label = container.append("label")
         .attr("class","sliderLabel")
         .html(labelText)
@@ -45,8 +46,41 @@ Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1
         .attr('class','muted')
         .text(formatText(start, symbol));
         
+    if (labelText == 'Inflation') {
+        container.append('i')
+            .attr('class',"fa fa-exclamation-circle fa-2x pull-right text-primary")
+            .attr('data-toggle','popover')
+            .attr('title','Inflation')
+            .attr('data-content','This value represents the expected inflation rate over the duration of the portfolio.  Naturally this value fluctuates over time, however this calculator assumes a constant rate of inflation.  For reference, the average rate of inflation from 2006 to 2016 was about 1.78%.')
+            .attr('data-trigger','hover')
+            .attr('id','inflationPopover')
+
+        jQuery('#inflationPopover').popover({container: 'body', placement: "bottom"})
+    } else if (labelText == 'Rate of return') {
+        container.append('i')
+            .attr('class',"fa fa-exclamation-circle fa-2x pull-right text-primary")
+            .attr('data-toggle','popover')
+            .attr('title','Rate of return')
+            .attr('data-content','This value represents the expected rate of return over the duration of the portfolio and is driven by market performance.  Although only a single value is assumed for the duration of the portfolio, it is important to note that the rate of return at any given moment is very volatile.  Investopedia states that the average annual return of the S&P 500 from 1928 to 2014 was about 10%, however many would argue that a long term return of about 7% is more accurate.')
+            .attr('data-trigger','hover')
+            .attr('id','returnPopover')
+
+        jQuery('#returnPopover').popover({container: 'body', placement: "bottom"})
+    } else if (labelText == 'Fees') {
+        container.append('i')
+            .attr('class',"fa fa-exclamation-circle fa-2x pull-right text-primary")
+            .attr('data-toggle','popover')
+            .attr('title','Fees')
+            .attr('data-content','Any fee associated with the portoflio should be taken into account with this value.  This can include anything like a portfolio management fee, to administration fees, to any other hidden fees.')
+            .attr('data-trigger','hover')
+            .attr('id','feePopover')
+
+        jQuery('#feePopover').popover({container: 'body', placement: "bottom"})
+    }
+
     container.append('div')
         .attr("id","slide-" + this.id);
+
 
     var slider = document.getElementById('slide-' + this.id);
     var connect = Array.isArray(start) ? true : 'lower';

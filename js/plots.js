@@ -39,7 +39,7 @@ var tipBar = d3.tip()
   })
 
 
-var margin = {top: 25, right: 0, bottom: 10, left: 70};
+var margin = {top: 25, right: 0, bottom: 10, left: 80};
 function stackedBar(portfolio, div) {
 
     var layers = calcBar(portfolio);
@@ -81,7 +81,8 @@ function stackedBar(portfolio, div) {
     var yAxis = d3.svg.axis()
         .scale(y)
         .orient("left")
-        .tickFormat(function(d) { return formatCurrency(d); });
+        .tickFormat(function(d) { return formatCurrency(d); })
+        .ticks(4)
 
     portfolio.bar.axis.x = xAxis;
     portfolio.bar.axis.y = yAxis;
