@@ -95,5 +95,5 @@ select {
 }
 
 .hover * {
-    fill: yellowGreen !important;
+    fill: #34495e !important;
 }
