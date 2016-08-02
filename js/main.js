@@ -44,7 +44,7 @@ function init(div) {
         .attr('class','row')
       .append('div')
         .attr('class','col-sm-12')
-        .html('<p class="lead">The charts below will detail how much you will earn/lose per year in interest, fees, inflation and contributions.  To add a new portfolio, enter a name and then click <i class="fa fa-plus fa-lg"></i> button.</p>')
+        .html('<p class="lead">The charts below will detail how much you will earn/lose per year in interest, fees, inflation and contributions; or, if you toggle the switch, will show you the total portfolio value over time.  To add a new portfolio, enter a name and then click <i class="fa fa-plus fa-lg"></i> button.</p>')
     
       
     header.append("div")
