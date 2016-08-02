@@ -97,3 +97,8 @@ select {
 .hover * {
     fill: #34495e !important;
 }
+
+.barText {
+    font-size: 16px;
+    fill: white;
+}

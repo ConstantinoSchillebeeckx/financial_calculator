@@ -197,11 +197,20 @@ function updatePlots(id) {
 
 // Given an integer, will return it
 // formatted as USD ($xx,xxx.xx)
-function formatCurrency(d) {
-    if (d >= 0) {
-        return '$' + Math.abs(d).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+// by default will return value with cents,
+// however if cents=false, it will not
+function formatCurrency(d, cents=true) {
+
+    if (cents) {
+        var tmp = 2;
     } else {
-        return '-$' + Math.abs(d).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        var tmp = 0;
+    }
+
+    if (d >= 0) {
+        return '$' + Math.abs(d).toFixed(tmp).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    } else {
+        return '-$' + Math.abs(d).toFixed(tmp).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
     }
 }
 

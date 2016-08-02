@@ -327,25 +327,38 @@ function barChart(portfolio, div) {
         .attr('transform','translate(' + (width / 2) + ',0)')
         .attr('dy','-10')
 
-      svg.append("g")
-          .attr("class", "y axis")
-          .attr('id','y2')
-          .call(yAxis)
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr('id','y2')
+        .call(yAxis)
 
-      svg.selectAll(".bar")
-          .data(data)
-        .enter().append("rect")
-          .attr("class", "bar")
-          .attr("x", function(d) { return x(d.name); })
-          .attr("width", x.rangeBand())
-          .attr("y", height)
-          .attr('fill', function(d) { return color(d.name); })  
-          .attr('height', 0);
+    var bars = svg.selectAll(".bar")
+        .data(data)
+        .enter()
+        
+    bars.append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) { return x(d.name); })
+        .attr("width", x.rangeBand())
+        .attr("y", height)
+        .attr('fill', function(d) { return color(d.name); })  
+        .attr('height', 0)
+      
+    bars.append('text')
+        .attr('text-anchor','middle')
+        .attr('class','barText')
+        .attr('x', function(d) { return x(d.name); })
+        .attr('y', height)
+        .attr('dx', x.rangeBand()/2)
+        .attr('opacity',1e-6)
+        .text(function(d) { return formatCurrency(d.val, false); })
 
-      svg.append("g")
-          .attr("class", "x axis")
-          .attr("transform", "translate(0," + height + ")")
-          .call(xAxis);
+
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
 
     updateSimpleBar(portfolio);
 
@@ -373,6 +386,26 @@ function updateSimpleBar(portfolio) {
         .duration(duration)
         .attr("y", function(d) { return y(d.val); })
         .attr("height", function(d) { return portfolio.simpleBar.height - y(d.val); })
+
+    svg.selectAll('.barText')
+        .data(data)
+        .transition()
+        .duration(duration)
+        .attr('opacity',1)
+        .attr('dy', function(d) { 
+            if (portfolio.simpleBar.height - y(d.val) < 40) { 
+                return -10;
+            } else { 
+                return 25; 
+            }
+        })
+        .attr('style', function(d) {
+            if (portfolio.simpleBar.height - y(d.val) < 40) { 
+                return 'fill:black;';
+            }
+        })
+        .attr('y', function(d) { return y(d.val); })
+        .text(function(d) { return formatCurrency(d.val, false); })
 
     svg.select('#y2').transition().duration(duration).call(yAxis);
         
