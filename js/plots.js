@@ -232,7 +232,6 @@ function drawStackedBar(portfolio) {
 
     svg.select('#y').transition().duration(duration).call(yAxis);
 
-    console.log(layers.columns)
 
     // update legend
     var legend = svg.selectAll(".legend")
@@ -240,7 +239,7 @@ function drawStackedBar(portfolio) {
 
     legend.transition()
         .duration(duration)
-        .attr("transform", function(d, i) { console.log(i); return "translate(20," + (i * 20) + ")"; })
+        .attr("transform", function(d, i) { return "translate(20," + (i * 20) + ")"; })
         .attr('opacity',1)
       
     legend.select('text')
