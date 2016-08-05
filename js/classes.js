@@ -16,7 +16,7 @@ function Slider () {
 - freqID : str - label for frequency dropdown
 
 */
-Slider.prototype.add = function (sel, labelText, symbol, min=10, max=100, step=1, start=25, freq=false, freqID='') {
+Slider.prototype.add = function (sel, labelText, symbol, min, max, step, start, freq, freqID) {
 
     var id = this.id;
 
@@ -204,7 +204,7 @@ Slider.prototype.get_val = function() {
 
 var num_portfolio = 0;
 
-function Portfolio (name="default", profile = new Profile("default"), rateOfReturn=defaultRateOfReturn, fee=defaultFee, startingValue=defaultStartingValue, contributions=defaultContributions, contributionFreqPerYear=defaultContribFreqPerYear, compoundFreqPerYear=defaultCompoundFreqPerYear, feeFreqPerYear=defaultFeeFreqPerYear) {
+function Portfolio (name, profile, rateOfReturn, fee, startingValue, contributions, contributionFreqPerYear, compoundFreqPerYear, feeFreqPerYear) {
 
     num_portfolio += 1;
 
@@ -321,7 +321,7 @@ Portfolio.prototype.updateProfile = function(age, retirementAge, inflation) {
 }
 
 
-function Profile (name, age=32, retirementAge=65, inflation=2) {
+function Profile (name, age, retirementAge, inflation) {
 
     this.name = name;
     this.age = age ; // +1 because we don't compound this year

@@ -39,18 +39,18 @@ var tipBar = d3.tip()
   })
 
 
-var margin = {top: 25, right: 0, bottom: 10, left: 80};
+var marginStacked = {top: 25, right: 5, bottom: 10, left: 80};
 function stackedBar(portfolio, div) {
 
     var layers = calcBar(portfolio);
 
-    width = d3.select(div).node().clientWidth - margin.left - margin.right;
-    height = width * 0.5 - margin.top - margin.bottom
+    width = d3.select(div).node().clientWidth - marginStacked.left - marginStacked.right;
+    height = width * 0.5 - marginStacked.top - marginStacked.bottom
 
     var svg = d3.select(div)
         .append('svg') // viewbox is set after rendering chart
           .attr("id","barSVG")
-        .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .append("g").attr("transform", "translate(" + marginStacked.left + "," + marginStacked.top + ")");
 
     // plot title
     svg.append('text')
@@ -105,26 +105,28 @@ function stackedBar(portfolio, div) {
       .attr("height", 0)
 
 
-    var legend = svg.selectAll(".legend")
-      .data(layers.columns)
-      .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(20,20)"; })
-        .style("font", "10px sans-serif");
+    if (window.innerWidth > 500) {
+        var legend = svg.selectAll(".legend")
+          .data(layers.columns)
+          .enter().append("g")
+            .attr("class", "legend")
+            .attr("transform", function(d, i) { return "translate(20,20)"; })
+            .style("font", "10px sans-serif");
 
-    legend.append("rect")
-        .attr("x", 18)
-        .attr("width", 18)
-        .attr("height", 18)
-        .attr("fill", function(d,i) { return color(layers.columns[i]); });
+        legend.append("rect")
+            .attr("x", 18)
+            .attr("width", 18)
+            .attr("height", 18)
+            .attr("fill", function(d,i) { return color(layers.columns[i]); });
 
-    legend.append("text")
-        .attr("x", 40)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .attr("text-anchor", "start")
-        .attr('opacity',1e-6)
-        .text(function(d) { return d; });
+        legend.append("text")
+            .attr("x", 40)
+            .attr("y", 9)
+            .attr("dy", ".35em")
+            .attr("text-anchor", "start")
+            .attr('opacity',1e-6)
+            .text(function(d) { return d; });
+    }
 
 
     svg.append("g")
@@ -141,7 +143,7 @@ function stackedBar(portfolio, div) {
 
     drawStackedBar(portfolio);
 
-    fitViewBox('#barPlot' + portfolio.id);
+    fitViewBox('#barPlot' + portfolio.id, marginStacked);
 
     return portfolio;
 
@@ -242,25 +244,26 @@ function drawStackedBar(portfolio) {
 
 
     // update legend
-    var legend = svg.selectAll(".legend")
-      .data(layers.columns)
+    if (window.innerWidth > 500) {
+        var legend = svg.selectAll(".legend")
+          .data(layers.columns)
 
-    legend.transition()
-        .duration(duration)
-        .attr("transform", function(d, i) { return "translate(20," + (i * 20) + ")"; })
-        .attr('opacity',1)
-      
-    legend.select('text')
-        .transition()
-        .duration(duration)
-        .attr('opacity',1)
-        .text(function(d) { return d; })
+        legend.transition()
+            .duration(duration)
+            .attr("transform", function(d, i) { return "translate(20," + (i * 20) + ")"; })
+            .attr('opacity',1)
+          
+        legend.select('text')
+            .transition()
+            .duration(duration)
+            .attr('opacity',1)
+            .text(function(d) { return d; })
 
-    legend.exit()
-        .transition()
-        .duration(duration)
-        .attr('opacity',1e-6)
-
+        legend.exit()
+            .transition()
+            .duration(duration)
+            .attr('opacity',1e-6)
+    }
 
 }
 
@@ -280,11 +283,11 @@ function drawStackedBar(portfolio) {
 ----------------------------------------------*/
 function barChart(portfolio, div) {
 
-    var margin = {top: 25, right: 0, bottom: 10, left: 80};
+    var marginSimple = {top: 25, right: 10, bottom: 10, left: 80};
     var data = portfolio.totals;
 
-    width = d3.select(div).node().clientWidth - margin.left - margin.right;
-    height = d3.select('#barPlot' + portfolio.id).node().clientHeight - margin.top - margin.bottom 
+    width = d3.select(div).node().clientWidth - marginSimple.left - marginSimple.right;
+    height = d3.select('#barPlot' + portfolio.id).node().clientHeight - marginStacked.top - marginStacked.bottom;
 
     var x = d3.scale.ordinal()
         .rangeRoundBands([0, width], .1);
@@ -307,7 +310,7 @@ function barChart(portfolio, div) {
         .append("svg") // viewBox set later
         .attr('id','simpleBar')
       .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + marginSimple.left + "," + marginSimple.top + ")");
 
     portfolio.simpleBar = {};
     portfolio.simpleBar.svg = svg;
@@ -353,6 +356,7 @@ function barChart(portfolio, div) {
         .attr('opacity',1e-6)
         .text(function(d) { return formatCurrency(d.val, false); })
 
+    
 
 
     svg.append("g")
@@ -362,7 +366,7 @@ function barChart(portfolio, div) {
 
     updateSimpleBar(portfolio);
 
-    fitViewBox('#simpleBarPlot' + portfolio.id);
+    fitViewBox('#simpleBarPlot' + portfolio.id, marginSimple);
     return portfolio;
 }
 

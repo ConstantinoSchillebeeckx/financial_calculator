@@ -199,7 +199,7 @@ function updatePlots(id) {
 // formatted as USD ($xx,xxx.xx)
 // by default will return value with cents,
 // however if cents=false, it will not
-function formatCurrency(d, cents=true) {
+function formatCurrency(d, cents) {
 
     if (cents) {
         var tmp = 2;
@@ -312,7 +312,7 @@ Parameters:
         selection string for div of SVG e.g. #barPlot1
 
 */
-function fitViewBox(sel) {
+function fitViewBox(sel, margin) {
 
     var x1, y1;
 
@@ -320,8 +320,8 @@ function fitViewBox(sel) {
 
 
     var g = d3.select(sel + ' svg g').node().getBBox();
-    x1 = g.width// + margin.left;
-    y1 = g.height + margin.bottom;
+    x1 = g.width + margin.right + margin.left;
+    y1 = g.height + margin.bottom + margin.top;
 
     d3.select(sel + ' svg').attr("viewBox", 0 + " " + 0 + " " + x1 + " " + y1);
 
