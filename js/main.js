@@ -44,7 +44,10 @@ function init(div) {
         .attr('class','row')
       .append('div')
         .attr('class','col-sm-12')
-        .html('<p class="lead">The charts below will detail how much you will earn/lose per year in interest, fees, inflation and contributions; or, if you toggle the switch, will show you the total portfolio value over time.  To add a new portfolio, enter a name and then click <i class="fa fa-plus fa-lg"></i> button.</p>')
+
+    header.append('div')
+        .attr('class','well')
+        .html('<p class="lead">The charts below will detail how much you stand to earn/lose per year in interest, fees, inflation and contributions; or, if you toggle the switch, will show you the total portfolio value over time.  To add a new portfolio, enter a name and then click <button class="btn btn-info btn-sm"><i class="fa fa-plus fa-lg"></i></button><br></p><small class="muted">For suggestions or improvements, please leave a <a href="https://github.com/ConstantinoSchillebeeckx/financial_calculator">pull-request <i class="fa fa-github fa-2x" aria-hidden="true"></i></a></small>')
     
       
     header.append("div")
