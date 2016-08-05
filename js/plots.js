@@ -283,7 +283,7 @@ function drawStackedBar(portfolio) {
 ----------------------------------------------*/
 function barChart(portfolio, div) {
 
-    var marginSimple = {top: 25, right: 10, bottom: 10, left: 80};
+    var marginSimple = {top: 25, right: 5, bottom: 10, left: 80};
     var data = portfolio.totals;
 
     width = d3.select(div).node().clientWidth - marginSimple.left - marginSimple.right;
