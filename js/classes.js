@@ -86,8 +86,8 @@ Slider.prototype.add = function (sel, labelText, symbol, min, max, step, start, 
     var connect = Array.isArray(start) ? true : 'lower';
     noUiSlider.create(slider, {
         start: start,
-        connect: connect,
-        margin: 1,
+        connect: Array.isArray(start) ? true : [true, false],
+        margin: step,
         step: step,
         range: {
             'min': min,
