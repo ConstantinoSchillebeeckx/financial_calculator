@@ -1,3 +1,3 @@
 # financial_calculator
 
-![Render](https://rawgit.com/ConstantinoSchillebeeckx/financial_calculator/master/SS.png "screenshot")
+![Render](https://cdn.jsdelivr.net/gh/ConstantinoSchillebeeckx/financial_calculator/SS.png "screenshot")
